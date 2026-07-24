@@ -3,6 +3,21 @@ import { createCsrfMiddleware, createMiddleware, createStart } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 
+// Clerk's own env lookup only checks process.env / import.meta.env, neither of
+// which reliably carries the Worker's secret store in production (unlike this
+// codebase's usual `cloudflare:workers` env access — see bindings.server.ts).
+// Read the keys from there directly. `cloudflare:workers` doesn't exist under
+// plain `vite dev` (Node/Bun, no Workers runtime) — the catch falls back to
+// Clerk's normal resolution, which is how local dev already worked.
+async function clerkKeysFromWorkerEnv() {
+  try {
+    const mod = (await import("cloudflare:workers")) as { env?: Record<string, string> };
+    return { secretKey: mod.env?.CLERK_SECRET_KEY, publishableKey: mod.env?.VITE_CLERK_PUBLISHABLE_KEY };
+  } catch {
+    return {};
+  }
+}
+
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
     return await next();
@@ -23,5 +38,5 @@ const csrfMiddleware = createCsrfMiddleware({
 });
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [clerkMiddleware(), csrfMiddleware, errorMiddleware],
+  requestMiddleware: [clerkMiddleware(clerkKeysFromWorkerEnv), csrfMiddleware, errorMiddleware],
 }));

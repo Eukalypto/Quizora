@@ -12,7 +12,10 @@
   // emits dist/server/server.js (`export default { fetch }`).
   "main": "dist/server/server.js",
   "compatibility_date": "2025-05-01",
-  "compatibility_flags": ["nodejs_compat"],
+  // nodejs_compat_populate_process_env copies Worker vars/secrets into
+  // process.env — required for @clerk/tanstack-react-start, which reads
+  // CLERK_SECRET_KEY via process.env rather than the Workers env binding.
+  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
   "observability": { "enabled": true },
 
   // SSR asset routing: static files in dist/client serve directly (asset-first);
