@@ -20,7 +20,9 @@
     "check:adapted": "bun scripts/check-adaptation.mjs",
     "validate-questions": "bun scripts/validate-questions.mjs",
     "merge-drive-questions": "bun scripts/merge-drive-questions.mjs",
-    "test": "bun test tests/*.test.ts"
+    "test": "bun test tests/*.test.ts",
+    "deploy": "bun run build && wrangler deploy",
+    "cf:dev": "wrangler dev"
   },
   "dependencies": {
     "@base-ui/react": "1.5.0",
@@ -73,7 +75,8 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.63.0",
     "vite": "^8.1.3",
-    "vite-plugin-svgr": "^5.2.0"
+    "vite-plugin-svgr": "^5.2.0",
+    "wrangler": "^4.113.0"
   },
   "overrides": {
     "@types/react": "19.2.15"
