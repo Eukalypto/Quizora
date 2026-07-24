@@ -1,3 +1,5 @@
+import { ClerkProvider } from "@clerk/tanstack-react-start";
+import { shadcn } from "@clerk/ui/themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -173,8 +175,10 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body className="bg-q-background-primary text-q-text-primary">
-        {children}
-        <Scripts />
+        <ClerkProvider appearance={{ theme: shadcn }}>
+          {children}
+          <Scripts />
+        </ClerkProvider>
       </body>
     </html>
   );

@@ -1,7 +1,9 @@
 // Server-only auth guard. Every server function that reads/writes a player's
 // quiz_users row must call this first and stop on `ok: false`.
 
-export interface HiggsfieldUser {
+import { auth, clerkClient } from "@clerk/tanstack-react-start/server";
+
+export interface AuthenticatedUser {
   id: string;
   name?: string | null;
   email?: string | null;
@@ -10,16 +12,23 @@ export interface HiggsfieldUser {
 }
 
 type AuthResult =
-  | { ok: true; user: HiggsfieldUser }
+  | { ok: true; user: AuthenticatedUser }
   | { ok: false; status: number; body: unknown };
 
 export async function requireCurrentUser(): Promise<AuthResult> {
-  const response = await fetch("https://fnf.internal/user");
-  const body = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    return { ok: false, status: response.status, body };
+  const { userId } = await auth();
+  if (!userId) {
+    return { ok: false, status: 401, body: { error: "unauthorized" } };
   }
 
-  return { ok: true, user: body as HiggsfieldUser };
+  const user = await clerkClient().users.getUser(userId);
+  return {
+    ok: true,
+    user: {
+      id: user.id,
+      name: user.fullName ?? user.username ?? null,
+      email: user.primaryEmailAddress?.emailAddress ?? null,
+      avatar_url: user.imageUrl ?? null,
+    },
+  };
 }

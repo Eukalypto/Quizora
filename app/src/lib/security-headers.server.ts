@@ -6,15 +6,21 @@ export function applySecurityHeaders(response: Response): Response {
   const headers = new Headers(response.headers);
   // The deployment platform owns `frame-ancestors`; setting it here would add
   // a second, intersecting policy that can block the host preview.
+  // script-src/frame-src/worker-src carry Clerk's frontend API + bot-protection
+  // widget (Cloudflare Turnstile) domains — needed for clerk-js to load and for
+  // its iframe-based flows. *.clerk.accounts.dev is the dev-instance domain;
+  // switching to a production Clerk instance on a custom domain will need this
+  // updated (or can drop the wildcard in favor of a proxied same-origin path).
   headers.set(
     "Content-Security-Policy",
     "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline'; " +
+      "script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://challenges.cloudflare.com; " +
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
       "font-src 'self' https://fonts.gstatic.com; " +
       "img-src 'self' data: https:; media-src 'self' https:; " +
       "connect-src 'self' https:; " +
-      "frame-src 'self' https://auth.higgsfield.app https://auth.higgsfield-dev.app; " +
+      "frame-src 'self' https://*.clerk.accounts.dev https://challenges.cloudflare.com; " +
+      "worker-src 'self' blob:; " +
       "base-uri 'self'; form-action 'self'",
   );
   headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");

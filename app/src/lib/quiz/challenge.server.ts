@@ -1,5 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import type { HiggsfieldUser } from "@/lib/auth.server";
+import type { AuthenticatedUser } from "@/lib/auth.server";
 import { ALL_CATEGORIES } from "@/lib/category-list";
 import type { Question } from "@/lib/categories";
 import { ALL_QUESTIONS } from "@/lib/question-bank";
@@ -61,7 +61,7 @@ function isExpired(row: ChallengeRow): boolean {
 
 export async function createChallengeAndStartRound1(
   db: D1Database,
-  user: HiggsfieldUser,
+  user: AuthenticatedUser,
   categoryKey: string,
 ): Promise<{ ok: true; id: string; questions: Question[] } | { ok: false; error: "unknown_category" }> {
   const tags = tagsForCategoryKey(categoryKey);
@@ -86,7 +86,7 @@ export type JoinChallengeError = "not_found" | "expired" | "already_full" | "own
  * already played, no category choice here (that only happens for Round 2). */
 export async function joinChallengeAndPlayRound1(
   db: D1Database,
-  user: HiggsfieldUser,
+  user: AuthenticatedUser,
   id: string,
 ): Promise<{ ok: true; questions: Question[] } | { ok: false; error: JoinChallengeError }> {
   const row = await loadChallenge(db, id);

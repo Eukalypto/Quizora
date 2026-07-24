@@ -23,10 +23,20 @@ export function useCurrentUser() {
   });
 }
 
-export function loginRedirect(returnPath = window.location.pathname + window.location.search) {
-  window.location.href = `/__auth/login?return=${encodeURIComponent(returnPath)}`;
+declare global {
+  interface Window {
+    Clerk?: { signOut: (opts?: { redirectUrl?: string }) => Promise<void> };
+  }
 }
 
-export function logoutRedirect(returnPath = "/") {
-  window.location.href = `/__auth/logout?return=${encodeURIComponent(returnPath)}`;
+export function loginRedirect(returnPath = window.location.pathname + window.location.search) {
+  window.location.href = `/sign-in?redirect_url=${encodeURIComponent(returnPath)}`;
+}
+
+export async function logoutRedirect(returnPath = "/") {
+  if (window.Clerk) {
+    await window.Clerk.signOut({ redirectUrl: returnPath });
+    return;
+  }
+  window.location.href = returnPath;
 }

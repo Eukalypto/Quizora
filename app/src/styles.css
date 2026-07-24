@@ -23,6 +23,8 @@
 @import "tw-animate-css";
 /* shadcn v4 base (scrollbar/scroll-fade utilities, toast base) for src/components/ui */
 @import "shadcn/tailwind.css";
+/* Clerk's prebuilt components (SignIn, SignUp, UserButton) themed to match shadcn */
+@import "@clerk/ui/themes/shadcn.css";
 
 @custom-variant dark (&:where([data-theme="default-dark"], [data-theme="default-dark"] *));
 
