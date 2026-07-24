@@ -1,0 +1,24 @@
+{
+  "topLevel": [
+    "history",
+    "geography",
+    "traditions",
+    "arts",
+    "literature",
+    "sciences",
+    "sports",
+    "music",
+    "screens",
+    "sciences-2",
+    "sports-2"
+  ],
+  "continents": [
+    "europe",
+    "asia",
+    "north-america",
+    "south-america",
+    "africa",
+    "oceania"
+  ],
+  "centuries": []
+}

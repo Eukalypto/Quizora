@@ -1,0 +1,16 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A 7-day streak flame with unlocked badges">
+  <rect width="800" height="600" fill="#0B1320"/>
+  <path d="M400 150c40 60 70 95 70 150a70 70 0 1 1-140 0c0-35 18-55 30-80-2 30 12 42 22 42 14 0 18-16 18-30 0-35-10-55 0-82Z" fill="#2DD4BF"/>
+  <text x="400" y="440" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#F5F7FA">7-day streak</text>
+
+  <g font-family="Arial, sans-serif" font-size="34">
+    <circle cx="230" cy="510" r="34" fill="#1F2A44" stroke="#1CA9C9"/>
+    <text x="230" y="522" text-anchor="middle">📚</text>
+    <circle cx="330" cy="510" r="34" fill="#1F2A44" stroke="#1CA9C9"/>
+    <text x="330" y="522" text-anchor="middle">🎯</text>
+    <circle cx="470" cy="510" r="34" fill="#1F2A44" stroke="#1CA9C9"/>
+    <text x="470" y="522" text-anchor="middle">🧠</text>
+    <circle cx="570" cy="510" r="34" fill="#1F2A44" stroke="#1CA9C9"/>
+    <text x="570" y="522" text-anchor="middle">🚀</text>
+  </g>
+</svg>

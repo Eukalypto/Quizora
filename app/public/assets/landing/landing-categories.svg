@@ -1,0 +1,25 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Category chips spanning history, geography, science and more">
+  <rect width="800" height="600" fill="#0B1320"/>
+  <g font-family="Arial, sans-serif" font-size="24" font-weight="600">
+    <rect x="90" y="140" width="220" height="64" rx="32" fill="#1CA9C9"/>
+    <text x="200" y="180" text-anchor="middle" fill="#0B1320">History</text>
+
+    <rect x="340" y="110" width="270" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="475" y="150" text-anchor="middle" fill="#F5F7FA">Geography of Asia</text>
+
+    <rect x="120" y="240" width="200" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="220" y="280" text-anchor="middle" fill="#F5F7FA">Science</text>
+
+    <rect x="360" y="250" width="220" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="470" y="290" text-anchor="middle" fill="#F5F7FA">Traditions</text>
+
+    <rect x="150" y="350" width="230" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="265" y="390" text-anchor="middle" fill="#F5F7FA">17th Century</text>
+
+    <rect x="420" y="370" width="200" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="520" y="410" text-anchor="middle" fill="#F5F7FA">Cinema</text>
+
+    <rect x="250" y="450" width="260" height="64" rx="32" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="380" y="490" text-anchor="middle" fill="#F5F7FA">History of Europe</text>
+  </g>
+</svg>

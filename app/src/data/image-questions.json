@@ -1,0 +1,209 @@
+[
+  {
+    "subcategories": [
+      "history",
+      "europe"
+    ],
+    "level": 2,
+    "question": "Guess what this famous painting is called.",
+    "answers": [
+      "Girl with a Pearl Earring",
+      "The Starry Night",
+      "The Mona Lisa",
+      "The Last Supper"
+    ],
+    "correct": 2,
+    "media_url": "https://upload.wikimedia.org/wikipedia/commons/6/6a/Mona_Lisa.jpg"
+  },
+  {
+    "subcategories": [
+      "history",
+      "asia"
+    ],
+    "level": 1,
+    "question": "Guess what this famous landmark is.",
+    "answers": [
+      "The Great Wall of China",
+      "The Great Pyramid of Giza",
+      "Machu Picchu",
+      "Angkor Wat"
+    ],
+    "correct": 0,
+    "media_url": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Great_Wall_of_China_July_2006.JPG"
+  },
+  {
+    "subcategories": [
+      "history",
+      "south-america"
+    ],
+    "level": 2,
+    "question": "Guess which country this ancient mountaintop citadel is located in.",
+    "answers": [
+      "Mexico",
+      "Peru",
+      "Bolivia",
+      "Chile"
+    ],
+    "correct": 1,
+    "media_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Machu_Picchu%2C_Peru.jpg"
+  },
+  {
+    "subcategories": [
+      "history",
+      "europe"
+    ],
+    "level": 1,
+    "question": "Guess which Paris landmark this is.",
+    "answers": [
+      "The Eiffel Tower",
+      "Big Ben",
+      "The Leaning Tower of Pisa",
+      "The Brandenburg Gate"
+    ],
+    "correct": 0,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102628_877dc6cb-5023-4477-bccb-4271e6f16240.png"
+  },
+  {
+    "subcategories": [
+      "history",
+      "north-america"
+    ],
+    "level": 1,
+    "question": "Guess which famous statue this is.",
+    "answers": [
+      "The Statue of Liberty",
+      "Christ the Redeemer",
+      "The Statue of Unity",
+      "The Motherland Calls"
+    ],
+    "correct": 0,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102631_ca25016c-ab24-419f-8491-5852e6a35221.png"
+  },
+  {
+    "subcategories": [
+      "geography",
+      "africa"
+    ],
+    "level": 2,
+    "question": "Guess which desert these dunes belong to.",
+    "answers": [
+      "The Sahara",
+      "The Kalahari",
+      "The Gobi",
+      "The Atacama"
+    ],
+    "correct": 0,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102633_d9dc9bc9-e05a-47ec-89dc-79b584469e21.png"
+  },
+  {
+    "subcategories": [
+      "geography",
+      "asia"
+    ],
+    "level": 2,
+    "question": "Guess which mountain this is.",
+    "answers": [
+      "Mount Fuji",
+      "Mount Cook",
+      "Mount Rainier",
+      "Mount Kilimanjaro"
+    ],
+    "correct": 0,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102722_0491fce6-9a4b-4e16-bc2a-a60ee82ef9c6.png"
+  },
+  {
+    "subcategories": [
+      "geography",
+      "europe"
+    ],
+    "level": 2,
+    "question": "Guess which city these canals belong to.",
+    "answers": [
+      "Amsterdam",
+      "Venice",
+      "Stockholm",
+      "Bruges"
+    ],
+    "correct": 1,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102723_9d0b5fb2-0269-4024-aceb-dd77a8d72059.png"
+  },
+  {
+    "subcategories": [
+      "sciences"
+    ],
+    "level": 1,
+    "question": "Guess which planet this is.",
+    "answers": [
+      "Uranus",
+      "Neptune",
+      "Jupiter",
+      "Saturn"
+    ],
+    "correct": 3,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102726_fb60384b-9a54-40e8-a67d-5916e0168c4a.png"
+  },
+  {
+    "subcategories": [
+      "sciences",
+      "europe"
+    ],
+    "level": 2,
+    "question": "Guess which natural phenomenon this is.",
+    "answers": [
+      "A solar eclipse",
+      "Aurora Borealis",
+      "A lunar halo",
+      "Bioluminescent waves"
+    ],
+    "correct": 1,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102832_c19f598c-8ec7-4ce6-b3dc-2527f77a0e57.png"
+  },
+  {
+    "subcategories": [
+      "traditions",
+      "asia"
+    ],
+    "level": 2,
+    "question": "Guess which tradition this scene comes from.",
+    "answers": [
+      "A carnival parade",
+      "A harvest festival",
+      "A fire festival",
+      "A lantern festival"
+    ],
+    "correct": 3,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102833_0f816986-1065-47fd-a422-e17108e403f7.png"
+  },
+  {
+    "subcategories": [
+      "geography",
+      "oceania"
+    ],
+    "level": 2,
+    "question": "Guess which natural landmark this is.",
+    "answers": [
+      "The Twelve Apostles",
+      "Table Mountain",
+      "Devils Tower",
+      "Uluru"
+    ],
+    "correct": 3,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_102835_295d2574-57d0-4600-8372-06670ff60389.png"
+  },
+  {
+    "subcategories": [
+      "history",
+      "north-america"
+    ],
+    "level": 3,
+    "question": "Guess which civilization built this stepped pyramid.",
+    "answers": [
+      "The Aztec",
+      "The Maya",
+      "The Inca",
+      "The Olmec"
+    ],
+    "correct": 1,
+    "media_url": "https://d8j0ntlcm91z4.cloudfront.net/user_395pfIGpMYSrNIR7bnXdxPtFdE7/hf_20260720_103026_06b75f8e-acdb-4f96-ab85-f9be8fdb8b46.png"
+  }
+]

@@ -1,0 +1,12 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quiz result showing a perfect score ring">
+  <rect width="800" height="600" fill="#0B1320"/>
+  <circle cx="400" cy="300" r="180" fill="none" stroke="#1F2A44" stroke-width="28"/>
+  <circle cx="400" cy="300" r="180" fill="none" stroke="#2DD4BF" stroke-width="28" stroke-linecap="round"
+    stroke-dasharray="1131" stroke-dashoffset="140" transform="rotate(-90 400 300)"/>
+  <text x="400" y="285" text-anchor="middle" font-family="Arial, sans-serif" font-size="88" font-weight="700" fill="#F5F7FA">9/10</text>
+  <text x="400" y="335" text-anchor="middle" font-family="Arial, sans-serif" font-size="26" fill="#94A3B8">Nice run</text>
+  <circle cx="150" cy="120" r="6" fill="#1CA9C9"/>
+  <circle cx="660" cy="110" r="5" fill="#1CA9C9"/>
+  <circle cx="120" cy="470" r="5" fill="#1CA9C9"/>
+  <circle cx="680" cy="480" r="6" fill="#1CA9C9"/>
+</svg>

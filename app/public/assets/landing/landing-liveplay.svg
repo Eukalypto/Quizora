@@ -1,0 +1,16 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live play podium with three team scores">
+  <rect width="800" height="600" fill="#0B1320"/>
+  <g>
+    <rect x="150" y="330" width="150" height="150" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="225" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#94A3B8">2</text>
+
+    <rect x="325" y="250" width="150" height="230" fill="#1CA9C9"/>
+    <text x="400" y="380" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#0B1320">1</text>
+
+    <rect x="500" y="370" width="150" height="110" fill="#1F2A44" stroke="#2DD4BF"/>
+    <text x="575" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#94A3B8">3</text>
+  </g>
+  <text x="225" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#F5F7FA">Team B</text>
+  <text x="400" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#F5F7FA">Team A</text>
+  <text x="575" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#F5F7FA">Team C</text>
+</svg>

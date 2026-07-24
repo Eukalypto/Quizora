@@ -1,0 +1,433 @@
+{
+  "history": [
+    {
+      "tags": [
+        "history",
+        "europe"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "history",
+        "asia"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "history",
+        "north-america"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "history",
+        "south-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "history",
+        "africa"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "history",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "geography": [
+    {
+      "tags": [
+        "geography",
+        "europe"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "geography",
+        "asia"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "geography",
+        "north-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "geography",
+        "south-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "geography",
+        "africa"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "geography",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "traditions": [
+    {
+      "tags": [
+        "traditions",
+        "europe"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "traditions",
+        "asia"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "traditions",
+        "north-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "traditions",
+        "south-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "traditions",
+        "africa"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "traditions",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "arts": [
+    {
+      "tags": [
+        "arts",
+        "europe"
+      ],
+      "ratio": 3
+    },
+    {
+      "tags": [
+        "arts",
+        "asia"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "arts",
+        "north-america"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "arts",
+        "south-america"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "arts",
+        "africa"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "arts",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "literature": [
+    {
+      "tags": [
+        "literature",
+        "europe"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "literature",
+        "asia"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "literature",
+        "north-america"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "literature",
+        "south-america"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "literature",
+        "africa"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "literature",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "sciences": [
+    {
+      "tags": [
+        "sciences",
+        "europe"
+      ],
+      "ratio": 3
+    },
+    {
+      "tags": [
+        "sciences",
+        "asia"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "sciences",
+        "north-america"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "sciences",
+        "south-america"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sciences",
+        "africa"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "sciences",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "sports": [
+    {
+      "tags": [
+        "sports",
+        "europe"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "sports",
+        "asia"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "sports",
+        "north-america"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "sports",
+        "south-america"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sports",
+        "africa"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "sports",
+        "oceania"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "sciences-2": [
+    {
+      "tags": [
+        "sciences-2",
+        "physics"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "chemistry"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "space"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "geology"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "biology"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "human-body"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "earth-and-climate"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sciences-2",
+        "technology"
+      ],
+      "ratio": 1
+    }
+  ],
+  "sports-2": [
+    {
+      "tags": [
+        "sports-2",
+        "football"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "basketball"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "tennis"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "racing"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "athletics"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sports-2",
+        "gymnastics"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "olympic-games"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "sports-2",
+        "golf"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "sports-2",
+        "combat-sports"
+      ],
+      "ratio": 1
+    }
+  ]
+}

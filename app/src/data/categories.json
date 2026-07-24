@@ -1,0 +1,508 @@
+[
+  {
+    "key": "history",
+    "label": "History",
+    "tags": [
+      "history"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "geography",
+    "label": "Geography",
+    "tags": [
+      "geography"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "traditions",
+    "label": "Traditions",
+    "tags": [
+      "traditions"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "arts",
+    "label": "Arts",
+    "tags": [
+      "arts"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "literature",
+    "label": "Literature",
+    "tags": [
+      "literature"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "sciences",
+    "label": "Sciences 1",
+    "tags": [
+      "sciences"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "sports",
+    "label": "Sports 1",
+    "tags": [
+      "sports"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "music",
+    "label": "Music",
+    "tags": [
+      "music"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "screens",
+    "label": "Screens",
+    "tags": [
+      "screens"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "history__europe",
+    "label": "History of Europe",
+    "tags": [
+      "history",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "history__asia",
+    "label": "History of Asia",
+    "tags": [
+      "history",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "history__north-america",
+    "label": "History of North America",
+    "tags": [
+      "history",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "history__south-america",
+    "label": "History of South America",
+    "tags": [
+      "history",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "history__africa",
+    "label": "History of Africa",
+    "tags": [
+      "history",
+      "africa"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "history__oceania",
+    "label": "History of Oceania",
+    "tags": [
+      "history",
+      "oceania"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__europe",
+    "label": "Geography of Europe",
+    "tags": [
+      "geography",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__asia",
+    "label": "Geography of Asia",
+    "tags": [
+      "geography",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__north-america",
+    "label": "Geography of North America",
+    "tags": [
+      "geography",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__south-america",
+    "label": "Geography of South America",
+    "tags": [
+      "geography",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__africa",
+    "label": "Geography of Africa",
+    "tags": [
+      "geography",
+      "africa"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "geography__oceania",
+    "label": "Geography of Oceania",
+    "tags": [
+      "geography",
+      "oceania"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__europe",
+    "label": "Traditions of Europe",
+    "tags": [
+      "traditions",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__asia",
+    "label": "Traditions of Asia",
+    "tags": [
+      "traditions",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__north-america",
+    "label": "Traditions of North America",
+    "tags": [
+      "traditions",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__south-america",
+    "label": "Traditions of South America",
+    "tags": [
+      "traditions",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__africa",
+    "label": "Traditions of Africa",
+    "tags": [
+      "traditions",
+      "africa"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "traditions__oceania",
+    "label": "Traditions of Oceania",
+    "tags": [
+      "traditions",
+      "oceania"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "arts__europe",
+    "label": "Arts of Europe",
+    "tags": [
+      "arts",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "arts__asia",
+    "label": "Arts of Asia",
+    "tags": [
+      "arts",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "arts__north-america",
+    "label": "Arts of North America",
+    "tags": [
+      "arts",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "arts__south-america",
+    "label": "Arts of South America",
+    "tags": [
+      "arts",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__europe",
+    "label": "Literature of Europe",
+    "tags": [
+      "literature",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__asia",
+    "label": "Literature of Asia",
+    "tags": [
+      "literature",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__north-america",
+    "label": "Literature of North America",
+    "tags": [
+      "literature",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__south-america",
+    "label": "Literature of South America",
+    "tags": [
+      "literature",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__africa",
+    "label": "Literature of Africa",
+    "tags": [
+      "literature",
+      "africa"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "literature__oceania",
+    "label": "Literature of Oceania",
+    "tags": [
+      "literature",
+      "oceania"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__europe",
+    "label": "Sciences of Europe",
+    "tags": [
+      "sciences",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__asia",
+    "label": "Sciences of Asia",
+    "tags": [
+      "sciences",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__north-america",
+    "label": "Sciences of North America",
+    "tags": [
+      "sciences",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__south-america",
+    "label": "Sciences of South America",
+    "tags": [
+      "sciences",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__africa",
+    "label": "Sciences of Africa",
+    "tags": [
+      "sciences",
+      "africa"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sciences__oceania",
+    "label": "Sciences of Oceania",
+    "tags": [
+      "sciences",
+      "oceania"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sports__europe",
+    "label": "Sports of Europe",
+    "tags": [
+      "sports",
+      "europe"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sports__asia",
+    "label": "Sports of Asia",
+    "tags": [
+      "sports",
+      "asia"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sports__north-america",
+    "label": "Sports of North America",
+    "tags": [
+      "sports",
+      "north-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "sports__south-america",
+    "label": "Sports of South America",
+    "tags": [
+      "sports",
+      "south-america"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "television",
+    "label": "Television",
+    "tags": [
+      "television"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "classical-music",
+    "label": "Classical Music",
+    "tags": [
+      "classical-music"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "rock",
+    "label": "Rock",
+    "tags": [
+      "rock"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "series",
+    "label": "Series",
+    "tags": [
+      "series"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cinema",
+    "label": "Cinema",
+    "tags": [
+      "cinema"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  }
+]
