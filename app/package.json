@@ -22,10 +22,16 @@
     "merge-drive-questions": "bun scripts/merge-drive-questions.mjs",
     "test": "bun test tests/*.test.ts",
     "deploy": "bun run build && wrangler deploy",
-    "cf:dev": "wrangler dev"
+    "cf:dev": "wrangler dev",
+    "cap:sync": "cap sync",
+    "cap:ios": "cap open ios",
+    "cap:android": "cap open android"
   },
   "dependencies": {
     "@base-ui/react": "1.5.0",
+    "@capacitor/android": "8.4.2",
+    "@capacitor/core": "8.4.2",
+    "@capacitor/ios": "8.4.2",
     "@clerk/tanstack-react-start": "^1.4.21",
     "@clerk/ui": "1.25.7",
     "@higgsfield/app-landing": "workspace:*",
@@ -61,6 +67,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.4.2",
     "@cloudflare/workers-types": "^5.20260708.1",
     "@eslint/js": "^10.0.1",
     "@tanstack/router-cli": "^1.167.18",
