@@ -2,6 +2,7 @@
 // quiz_users row must call this first and stop on `ok: false`.
 
 import { auth, clerkClient } from "@clerk/tanstack-react-start/server";
+import { getClerkWorkerKeys } from "./clerk-worker-env";
 
 export interface AuthenticatedUser {
   id: string;
@@ -21,7 +22,7 @@ export async function requireCurrentUser(): Promise<AuthResult> {
     return { ok: false, status: 401, body: { error: "unauthorized" } };
   }
 
-  const user = await clerkClient().users.getUser(userId);
+  const user = await clerkClient(await getClerkWorkerKeys()).users.getUser(userId);
   return {
     ok: true,
     user: {
