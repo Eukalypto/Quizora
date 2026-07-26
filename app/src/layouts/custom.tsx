@@ -15,8 +15,6 @@ import { HistoryView } from "@/components/quiz/history-view";
 import { HomeView } from "@/components/quiz/home-view";
 import { LivePlaySelectView } from "@/components/quiz/live-play-select-view";
 import { MultiplayerView, type MultiplayerVariant } from "@/components/quiz/multiplayer-view";
-import { MysteryGalleryView } from "@/components/quiz/mystery-gallery-view";
-import { MysteryRoundView } from "@/components/quiz/mystery-round-view";
 import { ProfileView } from "@/components/quiz/profile-view";
 import { RanksView } from "@/components/quiz/ranks-view";
 import { ScoreView } from "@/components/quiz/score-view";
@@ -43,8 +41,6 @@ type View =
   | "ranks"
   | "liveplay"
   | "multiplayer"
-  | "mystery"
-  | "mystery-gallery"
   | "play"
   | "score"
   | "challenge"
@@ -238,10 +234,6 @@ function QuizoraApp({ challengeId }: { challengeId?: string }) {
     );
   } else if (view === "multiplayer") {
     content = <MultiplayerView variant={multiplayerVariant} onExit={() => setView("home")} />;
-  } else if (view === "mystery") {
-    content = <MysteryRoundView onComplete={handleGameComplete} onExit={() => setView("solo")} />;
-  } else if (view === "mystery-gallery") {
-    content = <MysteryGalleryView />;
   } else if (view === "challenge") {
     content = <ChallengeView challengeId={selectedChallengeId} onExit={() => setView("home")} />;
   } else if (view === "challenge-inbox") {
@@ -270,7 +262,6 @@ function QuizoraApp({ challengeId }: { challengeId?: string }) {
         avatarUrl={snapshot.avatarUrl}
         onOpenSolo={() => setView("solo")}
         onOpenMultiplayer={() => setView("liveplay")}
-        onOpenMystery={() => setView("mystery")}
         onOpenChallenge={() => setView("challenge-inbox")}
         onOpenProfile={() => setView("profile")}
       />
@@ -282,8 +273,6 @@ function QuizoraApp({ challengeId }: { challengeId?: string }) {
         onStartDaily={handleStartDaily}
         onStartWeekly={handleStartWeekly}
         onStartFreePlay={handleStartFreePlay}
-        onStartMystery={() => setView("mystery")}
-        onOpenMysteryGallery={() => setView("mystery-gallery")}
       />
     );
   } else if (view === "badges") {
@@ -299,13 +288,11 @@ function QuizoraApp({ challengeId }: { challengeId?: string }) {
         snapshot={snapshot}
         onOpenBadges={() => setView("badges")}
         onOpenHistory={() => setView("history")}
-        onOpenMysteryGallery={() => setView("mystery-gallery")}
-        onAvatarSaved={refreshSnapshot}
       />
     );
   }
 
-  const isFullBleed = view === "play" || view === "multiplayer" || view === "mystery" || view === "home";
+  const isFullBleed = view === "play" || view === "multiplayer" || view === "home";
 
   return (
     <CustomAppShell brand="Quizora" navigation={NAVIGATION} activeId={activeNavId} onNavigate={navigate}>
@@ -324,7 +311,6 @@ function QuizoraPreview() {
           user={{ id: "preview", name: "Guest" }}
           onOpenSolo={() => {}}
           onOpenMultiplayer={() => {}}
-          onOpenMystery={() => {}}
           onOpenChallenge={() => {}}
         />
       </WorkspaceContent>

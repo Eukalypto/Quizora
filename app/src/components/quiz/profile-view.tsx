@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Award, Flame, Gamepad2, Images, LogOut, Music, Sparkles, Volume2, VolumeX, Wand2 } from "lucide-react";
+import { Award, Flame, Gamepad2, LogOut, Music, Sparkles, Volume2, VolumeX } from "lucide-react";
 import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
 import { Progress } from "@higgsfield/quanta/progress";
 import { Typography } from "@higgsfield/quanta/typography";
 import { MetricCard, Page, PageHeader, Panel, Section } from "@/components/custom-ui";
-import { AvatarCreatorModal } from "@/components/quiz/avatar-creator-modal";
 import { logoutRedirect, type CurrentUser } from "@/hooks/use-current-user";
 import { BADGES } from "@/lib/quiz/badges";
 import { isAudioMuted, setAudioMuted, subscribeAudioMuted } from "@/lib/quiz/sound";
@@ -63,15 +62,11 @@ export function ProfileView({
   snapshot,
   onOpenBadges,
   onOpenHistory,
-  onOpenMysteryGallery,
-  onAvatarSaved,
 }: {
   user: CurrentUser;
   snapshot: UserSnapshot;
   onOpenBadges: () => void;
   onOpenHistory: () => void;
-  onOpenMysteryGallery: () => void;
-  onAvatarSaved: () => void;
 }) {
   const unlocked = BADGES.filter((b) => snapshot.unlockedBadgeIds.includes(b.id));
   const displayAvatar = snapshot.avatarUrl ?? (user.avatar_url as string | undefined);
@@ -81,17 +76,7 @@ export function ProfileView({
       <PageHeader
         title={
           <span className="flex flex-col items-center gap-3">
-            <AvatarCreatorModal
-              onSaved={onAvatarSaved}
-              trigger={
-                <button type="button" className="group relative rounded-q-full" aria-label="Change your avatar">
-                  <Avatar size="lg" src={displayAvatar} alt={user.name ?? "Player"} />
-                  <span className="absolute inset-0 flex items-center justify-center rounded-q-full bg-q-transparent-dark-40 opacity-0 transition-opacity group-hover:opacity-100">
-                    <Wand2 className="size-5 text-q-icon-inverse" aria-hidden />
-                  </span>
-                </button>
-              }
-            />
+            <Avatar size="lg" src={displayAvatar} alt={user.name ?? "Player"} />
             {user.name ?? "Player"}
           </span>
         }
@@ -151,23 +136,6 @@ export function ProfileView({
             ))}
           </div>
         )}
-      </Section>
-
-      <Section
-        title="Mystery Round gallery"
-        description="Every mystery image from your games."
-        actions={
-          <Button variant="ghost" size="xs" onClick={onOpenMysteryGallery}>
-            View all
-          </Button>
-        }
-      >
-        <Panel className="flex items-center gap-3">
-          <Images className="size-5 text-q-icon-secondary" aria-hidden />
-          <Typography as="span" variant="body-sm-regular" color="secondary">
-            Browse what's been guessed so far.
-          </Typography>
-        </Panel>
       </Section>
 
       <Section title="History">
