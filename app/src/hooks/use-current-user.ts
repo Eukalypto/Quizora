@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@clerk/tanstack-react-start";
 
 export interface CurrentUser {
   id: string;
@@ -16,9 +17,15 @@ async function fetchCurrentUser(): Promise<CurrentUser | null> {
 }
 
 export function useCurrentUser() {
+  // Clerk signs in/out via client-side navigation, not a hard reload — a
+  // static query key would keep serving the pre-sign-in cached result
+  // (typically null) since nothing tells this query the session changed.
+  // Keying on userId busts the cache exactly when Clerk's own state does.
+  const { isLoaded, userId } = useAuth();
   return useQuery({
-    queryKey: ["current-user"],
+    queryKey: ["current-user", userId ?? null],
     queryFn: fetchCurrentUser,
+    enabled: isLoaded,
     staleTime: 60_000,
   });
 }
