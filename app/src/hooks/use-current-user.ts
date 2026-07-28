@@ -11,8 +11,12 @@ export interface CurrentUser {
 }
 
 async function fetchCurrentUser(): Promise<CurrentUser | null> {
+  // The native shell authenticates via Bearer token, not the session
+  // cookie (native-shell.ts) — sending credentials cross-origin needs
+  // Access-Control-Allow-Credentials on the response, which we don't (and,
+  // token-based, don't need to) send.
   const response = await fetch(withOrigin("/api/user"), {
-    credentials: "include",
+    credentials: isNativeShell() ? "omit" : "include",
     headers: await nativeAuthHeaders(),
   });
   if (response.status === 401) return null;
