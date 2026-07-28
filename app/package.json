@@ -23,6 +23,7 @@
     "test": "bun test tests/*.test.ts",
     "deploy": "bun run build && wrangler deploy",
     "cf:dev": "wrangler dev",
+    "build:mobile-shell": "vite build && node scripts/build-mobile-shell.mjs",
     "cap:sync": "cap sync",
     "cap:ios": "cap open ios",
     "cap:android": "cap open android"

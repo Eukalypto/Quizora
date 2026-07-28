@@ -20,6 +20,11 @@ workflows:
           export PATH="$HOME/.bun/bin:$PATH"
           cd app
           bun install
+      - name: Build mobile shell (bundled UI, live-Worker data)
+        script: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bun run build:mobile-shell
       - name: Sync Capacitor iOS project
         script: |
           export PATH="$HOME/.bun/bin:$PATH"
@@ -55,6 +60,11 @@ workflows:
           export PATH="$HOME/.bun/bin:$PATH"
           cd app
           bun install
+      - name: Build mobile shell (bundled UI, live-Worker data)
+        script: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bun run build:mobile-shell
       - name: Sync Capacitor Android project
         script: |
           export PATH="$HOME/.bun/bin:$PATH"

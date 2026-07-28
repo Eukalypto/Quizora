@@ -1,18 +1,17 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
-// Quizora is a full TanStack Start SSR app — auth (Clerk middleware) and all
-// game data (D1 via server functions) require the live Worker. There's no
-// standalone index.html to bundle locally (every route falls through to SSR
-// — see wrangler.jsonc), so the WebView loads the deployed app directly
-// instead of a local `webDir` bundle.
+// The UI ships bundled in the app (webDir: mobile-shell, built by
+// `bun run build:mobile-shell` — see scripts/build-mobile-shell.mjs): a
+// static prerendered shell for /app plus the client JS/CSS bundle, no
+// remote server.url. Game data and auth still require the internet — every
+// server-function/API call is redirected to the live Worker at request
+// time (src/lib/native-shell.ts, src/start.ts's CORS + Bearer-token
+// handling), since this bundle's own origin (capacitor://localhost on iOS,
+// https://localhost on Android) has no server behind it.
 const config: CapacitorConfig = {
   appId: 'com.eukalypto.quizora',
   appName: 'Quizora',
   webDir: 'mobile-shell',
-  server: {
-    url: 'https://quizora.quizora.workers.dev',
-    cleartext: false,
-  },
 };
 
 export default config;

@@ -99,6 +99,14 @@ export default defineConfig(({ command, mode }) => {
       // inside effects/handlers, or guarded with `typeof window !== "undefined"`.
       tanstackStart({
         server: { entry: "server" },
+        // Prerenders /app into a static "shell" HTML (client bundle takes
+        // over routing/rendering/data-fetching after hydration — the actual
+        // game screens are all client-rendered behind Clerk's client-side
+        // useAuth() gate already, see layouts/custom.tsx). This shell is
+        // what gets bundled into the Capacitor app (see
+        // scripts/build-mobile-shell.mjs) — the live SSR site at "/" is
+        // untouched and keeps working exactly as before.
+        spa: { enabled: true, maskPath: "/app" },
       }),
       higgsfieldDesignInspectorVitePlugin(designInspectorEnabled),
       react({

@@ -10,6 +10,10 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+
+# Capacitor webDir — built by `bun run build:mobile-shell` (see
+# scripts/build-mobile-shell.mjs), not committed, same as dist/.
+mobile-shell
 .output
 .vinxi
 .tanstack/**

@@ -7,6 +7,7 @@ import { Typography } from "@higgsfield/quanta/typography";
 import { MetricCard, Page, PageHeader, Panel, Section } from "@/components/custom-ui";
 import { AvatarCreatorModal } from "@/components/quiz/avatar-creator-modal";
 import { logoutRedirect, type CurrentUser } from "@/hooks/use-current-user";
+import { withOrigin } from "@/lib/native-shell";
 import { BADGES } from "@/lib/quiz/badges";
 import { isAudioMuted, setAudioMuted, subscribeAudioMuted } from "@/lib/quiz/sound";
 import type { UserSnapshot } from "@/lib/quiz/types";
@@ -74,7 +75,8 @@ export function ProfileView({
   onAvatarSaved: () => void;
 }) {
   const unlocked = BADGES.filter((b) => snapshot.unlockedBadgeIds.includes(b.id));
-  const displayAvatar = snapshot.avatarUrl ?? (user.avatar_url as string | undefined);
+  const rawAvatar = snapshot.avatarUrl ?? (user.avatar_url as string | undefined);
+  const displayAvatar = rawAvatar ? withOrigin(rawAvatar) : rawAvatar;
 
   return (
     <Page>

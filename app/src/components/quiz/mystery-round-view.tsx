@@ -8,6 +8,7 @@ import { Progress } from "@higgsfield/quanta/progress";
 import { toast } from "@higgsfield/quanta/sonner";
 import { Typography } from "@higgsfield/quanta/typography";
 import { drawMysteryQuestion, getMysteryDailyStatus } from "@/lib/api/mystery.functions";
+import { withOrigin } from "@/lib/native-shell";
 import {
   MYSTERY_CATEGORY_EMOJI,
   MYSTERY_CATEGORY_LABEL,
@@ -84,7 +85,7 @@ export function MysteryRoundView({
         subjectId: result.subjectId,
         level: result.level,
         category: result.category,
-        mediaUrl: result.mediaUrl,
+        mediaUrl: withOrigin(result.mediaUrl),
         options: result.options,
         correctIndex: result.correctIndex,
       });

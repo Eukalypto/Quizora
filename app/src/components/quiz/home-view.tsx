@@ -3,6 +3,7 @@ import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
 import { Typography } from "@higgsfield/quanta/typography";
 import { loginRedirect, type CurrentUser } from "@/hooks/use-current-user";
+import { withOrigin } from "@/lib/native-shell";
 
 export function HomeView({
   user,
@@ -21,7 +22,8 @@ export function HomeView({
   onOpenChallenge: () => void;
   onOpenProfile?: () => void;
 }) {
-  const displayAvatar = avatarUrl ?? (user?.avatar_url as string | undefined);
+  const rawAvatar = avatarUrl ?? (user?.avatar_url as string | undefined);
+  const displayAvatar = rawAvatar ? withOrigin(rawAvatar) : rawAvatar;
 
   return (
     <div className="relative flex h-full min-h-0 flex-col items-center justify-center gap-10 p-6 text-center">

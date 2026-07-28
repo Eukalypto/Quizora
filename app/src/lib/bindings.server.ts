@@ -4,7 +4,7 @@
 // `cloudflare:workers` is the Workers-runtime module that exposes the Worker
 // env (bindings) — usable inside any server-side code (server functions,
 // server routes). It is NOT bundled; the runtime provides it.
-import { env } from "cloudflare:workers";
+//
 // Import the binding types directly — NOT via the global tsconfig `types` list,
 // which would clobber the DOM globals the client/SSR React code relies on.
 import type {
@@ -13,6 +13,27 @@ import type {
   KVNamespace,
   R2Bucket,
 } from "@cloudflare/workers-types";
+
+// Loaded lazily via a computed specifier (same pattern as getClerkWorkerKeys
+// in clerk-worker-env.ts) rather than a static
+// `import { env } from "cloudflare:workers"`: this module sits in the
+// server bundle's eagerly-loaded root graph, and the spa prerender build
+// step (vite.config.ts) runs that bundle under plain Node — which has no
+// `cloudflare:` scheme and throws ERR_UNSUPPORTED_ESM_URL_SCHEME on a
+// static import, crashing the whole build before it ever routes a request.
+// A top-level await here still resolves correctly under workerd (the
+// runtime this normally executes in) — this changes nothing for actual
+// deployed requests, only makes the Node-only prerender crawl tolerate the
+// module's absence.
+const CLOUDFLARE_WORKERS_MODULE = ["cloudflare", "workers"].join(":");
+let env: Record<string, unknown> = {};
+try {
+  env = ((await import(CLOUDFLARE_WORKERS_MODULE)) as { env?: Record<string, unknown> }).env ?? {};
+} catch {
+  // Not running under workerd (e.g. the prerender crawl) — bindings() below
+  // falls back to empty, matching the optional-binding guards callers
+  // already need for opt-out-of-manifest bindings.
+}
 
 type AppEnv = {
   DB?: D1Database;

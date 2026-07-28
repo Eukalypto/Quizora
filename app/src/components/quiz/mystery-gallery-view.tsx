@@ -6,6 +6,7 @@ import { Tabs } from "@higgsfield/quanta/tabs";
 import { Typography } from "@higgsfield/quanta/typography";
 import { EmptyState, Page, PageHeader, Panel, Section } from "@/components/custom-ui";
 import { getMysteryGallery } from "@/lib/api/mystery.functions";
+import { withOrigin } from "@/lib/native-shell";
 import { MYSTERY_CATEGORY_EMOJI, MYSTERY_CATEGORY_LABEL, type MysteryCategory } from "@/lib/quiz/mystery";
 
 const LEVEL_LABEL: Record<1 | 2 | 3, string> = { 1: "Easy", 2: "Medium", 3: "Hard" };
@@ -75,7 +76,7 @@ export function MysteryGalleryView() {
               {filtered.map((item) => (
                 <div key={item.id} className="flex flex-col gap-1.5">
                   <Media.Root ratio="square" rounded="lg">
-                    <Media.Image src={item.mediaUrl} alt={item.answer} fit="cover" />
+                    <Media.Image src={withOrigin(item.mediaUrl)} alt={item.answer} fit="cover" />
                   </Media.Root>
                   <Typography as="span" variant="caption-sm-medium" color="primary" truncate>
                     {item.answer}

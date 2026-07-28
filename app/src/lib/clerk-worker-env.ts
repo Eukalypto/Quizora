@@ -18,6 +18,15 @@ export async function getClerkWorkerKeys(): Promise<{ secretKey?: string; publis
     const mod = (await import(CLOUDFLARE_WORKERS_MODULE)) as { env?: Record<string, string> };
     return { secretKey: mod.env?.CLERK_SECRET_KEY, publishableKey: mod.env?.VITE_CLERK_PUBLISHABLE_KEY };
   } catch {
-    return {};
+    // Not running under workerd (plain `vite dev`/`vite build`, incl. this
+    // app's own SPA-shell prerender crawl — see vite.config.ts's spa
+    // option). This build target statically replaces any literal
+    // `process.env.X` reference with a build-time snapshot (empty here,
+    // since these secrets are never meant to be inlined into a shippable
+    // bundle) — reached indirectly via globalThis, this sees the real,
+    // live env instead, letting local dev/prerender find a key from
+    // .env.local without that snapshot getting in the way.
+    const nodeProcess = (globalThis as { process?: { env?: Record<string, string> } }).process;
+    return { secretKey: nodeProcess?.env?.CLERK_SECRET_KEY, publishableKey: nodeProcess?.env?.VITE_CLERK_PUBLISHABLE_KEY };
   }
 }

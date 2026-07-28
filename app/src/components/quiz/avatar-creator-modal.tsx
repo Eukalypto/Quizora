@@ -19,6 +19,7 @@ import {
   findHat,
   type AvatarConfig,
 } from "@/lib/quiz/avatar-pieces";
+import { nativeAuthHeaders, withOrigin } from "@/lib/native-shell";
 import { cn } from "@/lib/utils";
 
 type Layer = "background" | "face" | "hat" | "accessory";
@@ -56,7 +57,11 @@ function AvatarPreview({ config, size = PREVIEW_SIZE }: { config: AvatarConfig; 
 async function uploadAvatarBlob(blob: Blob): Promise<string> {
   const form = new FormData();
   form.append("file", blob, "avatar.png");
-  const res = await fetch("/api/avatar-upload", { method: "POST", body: form });
+  const res = await fetch(withOrigin("/api/avatar-upload"), {
+    method: "POST",
+    body: form,
+    headers: await nativeAuthHeaders(),
+  });
   const body = await res.json();
   if (!res.ok || !body.url) throw new Error(body.error ?? "upload_failed");
   return body.url as string;
