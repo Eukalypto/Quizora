@@ -13,6 +13,16 @@ workflows:
       # Vendored template deps (@higgsfield/quanta etc.) aren't in scope for
       # the native build — only Capacitor's own CLI/tooling is needed here.
       node: 22
+      # "Build mobile shell" runs a real vite build, which prerenders /app
+      # into the static shell Capacitor bundles (see vite.config.ts's spa
+      # option) — that prerender crawl sends an actual request through
+      # clerkMiddleware, which needs a valid-looking key to not throw, even
+      # though the crawl itself never authenticates a real user. Add a
+      # "clerk" env var group in Codemagic's dashboard (Environment
+      # variables) with CLERK_SECRET_KEY (marked Secret) and
+      # VITE_CLERK_PUBLISHABLE_KEY — same values as app/.env.local.
+      groups:
+        - clerk
     scripts:
       - name: Install JS dependencies
         script: |
@@ -53,6 +63,11 @@ workflows:
     environment:
       node: 22
       java: 17
+      # See the ios-simulator-build workflow's comment above — same "clerk"
+      # env var group needed here too, since this workflow also runs the
+      # mobile-shell build.
+      groups:
+        - clerk
     scripts:
       - name: Install JS dependencies
         script: |
