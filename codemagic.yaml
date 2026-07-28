@@ -12,7 +12,7 @@ workflows:
     environment:
       # Vendored template deps (@higgsfield/quanta etc.) aren't in scope for
       # the native build — only Capacitor's own CLI/tooling is needed here.
-      node: 20
+      node: 22
     scripts:
       - name: Install JS dependencies
         script: |
@@ -46,7 +46,7 @@ workflows:
     max_build_duration: 30
     instance_type: linux_x2
     environment:
-      node: 20
+      node: 22
       java: 17
     scripts:
       - name: Install JS dependencies
