@@ -1,0 +1,68 @@
+workflows:
+  # Proves the Capacitor iOS project builds cleanly — Simulator-only, so it
+  # needs no code-signing/Apple Developer Program membership (that's gated to
+  # August). This is the "does it build at all" check that Xcode 14.2 (the
+  # newest version this machine's hardware can run) can't perform locally —
+  # see the app.git commit history for the Swift-tools-version mismatch that
+  # blocks it there.
+  ios-simulator-build:
+    name: iOS - Simulator build
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      # Vendored template deps (@higgsfield/quanta etc.) aren't in scope for
+      # the native build — only Capacitor's own CLI/tooling is needed here.
+      node: 20
+    scripts:
+      - name: Install JS dependencies
+        script: |
+          curl -fsSL https://bun.sh/install | bash
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bun install
+      - name: Sync Capacitor iOS project
+        script: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bunx cap sync ios
+      - name: Build for iOS Simulator (no signing)
+        script: |
+          xcodebuild \
+            -project app/ios/App/App.xcodeproj \
+            -scheme App \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            -derivedDataPath "$CM_BUILD_DIR/derived-data" \
+            build
+    artifacts:
+      - $CM_BUILD_DIR/derived-data/Build/Products/**/*.app
+
+  # Same idea for Android — no hardware ceiling on this platform, but keeping
+  # both builds defined here means a single Codemagic connection covers the
+  # whole mobile wrapper, and a release keystore can be added to this
+  # workflow later without restructuring anything.
+  android-build:
+    name: Android - Debug build
+    max_build_duration: 30
+    instance_type: linux_x2
+    environment:
+      node: 20
+      java: 17
+    scripts:
+      - name: Install JS dependencies
+        script: |
+          curl -fsSL https://bun.sh/install | bash
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bun install
+      - name: Sync Capacitor Android project
+        script: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          cd app
+          bunx cap sync android
+      - name: Build debug APK
+        script: |
+          cd app/android
+          ./gradlew assembleDebug
+    artifacts:
+      - app/android/app/build/outputs/**/*.apk
