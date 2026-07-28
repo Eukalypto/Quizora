@@ -1,6 +1,6 @@
-import { ALL_QUESTIONS, TAXONOMY } from "@/lib/question-bank";
+import { getQuestionBank } from "@/lib/question-bank";
 import type { Question } from "@/lib/categories";
-import { COMBINED_CATEGORY_RATIOS, pickWeighted } from "./ratio-sampling";
+import { pickWeighted } from "./ratio-sampling";
 import { isoWeek, seededShuffle } from "./scoring";
 
 function shuffle<T>(items: T[]): T[] {
@@ -34,11 +34,12 @@ export const AI_QUESTION_COUNT = 2;
  * doing so still leaves enough candidates; a caller with a huge exclude set
  * doesn't get a broken/short set, it just recycles instead.
  */
-function buildQuestionSet(
+async function buildQuestionSet(
   size: number,
   shuffleFn: <T>(items: T[]) => T[],
   excludeIds: Set<number> = new Set(),
-): Question[] {
+): Promise<Question[]> {
+  const { questions: ALL_QUESTIONS, taxonomy: TAXONOMY, combinedCategories: COMBINED_CATEGORY_RATIOS } = await getQuestionBank();
   const filtered = excludeIds.size > 0 ? ALL_QUESTIONS.filter((q) => !excludeIds.has(q.id)) : ALL_QUESTIONS;
   const candidates = filtered.length >= size ? filtered : ALL_QUESTIONS;
 
@@ -82,7 +83,7 @@ function buildQuestionSet(
  * challenge's "one per day" gate, not per-question determinism).
  * `excludeIds` — questions this user has already seen (any solo mode), plus
  * this week's weekly set (see #3 — daily never repeats what weekly used). */
-export function buildDailySet(excludeIds: Set<number> = new Set()): Question[] {
+export function buildDailySet(excludeIds: Set<number> = new Set()): Promise<Question[]> {
   return buildQuestionSet(DAILY_SET_SIZE, shuffle, excludeIds);
 }
 
@@ -91,11 +92,12 @@ export function buildDailySet(excludeIds: Set<number> = new Set()): Question[] {
  * used in a past week's shared set (global, not per-user — keeps the set
  * identical for everyone within the week while never repeating across
  * weeks). */
-export function buildWeeklySet(week: string = isoWeek(), excludeIds: Set<number> = new Set()): Question[] {
+export function buildWeeklySet(week: string = isoWeek(), excludeIds: Set<number> = new Set()): Promise<Question[]> {
   return buildQuestionSet(WEEKLY_SET_SIZE, (items) => seededShuffle(items, `weekly:${week}`), excludeIds);
 }
 
-export function topLevelTagsForQuestions(questionIds: number[]): string[] {
+export async function topLevelTagsForQuestions(questionIds: number[]): Promise<string[]> {
+  const { questions: ALL_QUESTIONS, taxonomy: TAXONOMY } = await getQuestionBank();
   const tags = new Set<string>();
   for (const id of questionIds) {
     const q = ALL_QUESTIONS.find((q) => q.id === id);

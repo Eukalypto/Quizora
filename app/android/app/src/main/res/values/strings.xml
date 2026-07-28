@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Quizora</string>
     <string name="title_activity_main">Quizora</string>
-    <string name="package_name">com.quizora.app</string>
-    <string name="custom_url_scheme">com.quizora.app</string>
+    <string name="package_name">com.eukalypto.quizora</string>
+    <string name="custom_url_scheme">com.eukalypto.quizora</string>
 </resources>

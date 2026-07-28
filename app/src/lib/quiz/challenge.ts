@@ -1,6 +1,6 @@
-import { ALL_QUESTIONS } from "@/lib/question-bank";
+import { getQuestionBank } from "@/lib/question-bank";
 import type { Question } from "@/lib/categories";
-import { COMBINED_CATEGORY_RATIOS, pickWeighted } from "./ratio-sampling";
+import { pickWeighted } from "./ratio-sampling";
 
 export const CHALLENGE_QUESTION_COUNT = 10;
 export const CHALLENGE_INVITE_TTL_HOURS = 48;
@@ -34,7 +34,8 @@ export function generateChallengeId(): string {
  * category *they* picked — there's no shared question set to keep in sync
  * since the two rounds are never played at the same time.
  */
-export function buildChallengeRoundQuestions(categoryTags: string[]): Question[] {
+export async function buildChallengeRoundQuestions(categoryTags: string[]): Promise<Question[]> {
+  const { questions: ALL_QUESTIONS, combinedCategories: COMBINED_CATEGORY_RATIOS } = await getQuestionBank();
   const usedIds = new Set<number>();
   const picks: Question[] = [];
 

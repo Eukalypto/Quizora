@@ -37,4 +37,18 @@
     { "binding": "DB", "database_name": "quizora-db",
       "database_id": "615a0a0b-48f8-4425-8374-159e37facacd" }
   ],
+
+  // R2 — app.manifest.json "r2": true → env.STORAGE. Holds the question-bank
+  // content pipeline: content curators drop/replace files under raw-source/
+  // (same shape as scripts/raw-source/ locally); the daily Cron below (and
+  // the manual POST /api/admin/sync-questions trigger) merge them into
+  // compiled/*.json, which is what the app actually serves at runtime — see
+  // src/lib/question-bank.ts and src/lib/quiz/question-sync.server.ts.
+  "r2_buckets": [
+    { "binding": "STORAGE", "bucket_name": "quizora-content" }
+  ],
+
+  // Daily question-bank refresh — 04:00 UTC (low-traffic globally). See
+  // src/server.ts's `scheduled` export.
+  "triggers": { "crons": ["0 4 * * *"] },
 }

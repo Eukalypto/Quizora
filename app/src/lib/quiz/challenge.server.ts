@@ -2,7 +2,7 @@ import type { D1Database } from "@cloudflare/workers-types";
 import type { AuthenticatedUser } from "@/lib/auth.server";
 import { ALL_CATEGORIES } from "@/lib/category-list";
 import type { Question } from "@/lib/categories";
-import { ALL_QUESTIONS } from "@/lib/question-bank";
+import { getQuestionBank } from "@/lib/question-bank";
 import { buildChallengeRoundQuestions, CHALLENGE_INVITE_TTL_HOURS, generateChallengeId } from "./challenge";
 
 interface ChallengeRow {
@@ -45,9 +45,10 @@ function categoryLabel(key: string | null): string | null {
   return key ? (ALL_CATEGORIES.find((c) => c.key === key)?.label ?? key) : null;
 }
 
-function questionsFromIds(idsJson: string): Question[] {
+async function questionsFromIds(idsJson: string): Promise<Question[]> {
   const ids = JSON.parse(idsJson) as number[];
-  const byId = new Map(ALL_QUESTIONS.map((q) => [q.id, q]));
+  const { questions } = await getQuestionBank();
+  const byId = new Map(questions.map((q) => [q.id, q]));
   return ids.map((id) => byId.get(id)).filter((q): q is Question => q != null);
 }
 
@@ -67,7 +68,7 @@ export async function createChallengeAndStartRound1(
   const tags = tagsForCategoryKey(categoryKey);
   if (!tags) return { ok: false, error: "unknown_category" };
 
-  const questions = buildChallengeRoundQuestions(tags);
+  const questions = await buildChallengeRoundQuestions(tags);
   const id = generateChallengeId();
   await db
     .prepare(
@@ -103,7 +104,7 @@ export async function joinChallengeAndPlayRound1(
       .run();
   }
 
-  return { ok: true, questions: questionsFromIds(row.round1_question_ids) };
+  return { ok: true, questions: await questionsFromIds(row.round1_question_ids) };
 }
 
 interface RoundResult {
@@ -155,7 +156,7 @@ export async function startRound2(
 
   const tags = tagsForCategoryKey(categoryKey);
   if (!tags) return { ok: false, error: "unknown_category" };
-  const questions = buildChallengeRoundQuestions(tags);
+  const questions = await buildChallengeRoundQuestions(tags);
 
   await db
     .prepare(`UPDATE quiz_challenges SET round2_category_key = ?, round2_question_ids = ? WHERE id = ? AND round2_question_ids IS NULL`)
@@ -197,7 +198,7 @@ export async function submitRound2(
 export async function getRound2Questions(db: D1Database, userId: string, id: string): Promise<Question[] | null> {
   const row = await loadChallenge(db, id);
   if (!row || (row.creator_user_id !== userId && row.opponent_user_id !== userId) || !row.round2_question_ids) return null;
-  return questionsFromIds(row.round2_question_ids);
+  return await questionsFromIds(row.round2_question_ids);
 }
 
 export interface RoundSideState {

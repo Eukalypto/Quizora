@@ -1,8 +1,10 @@
 import "./lib/error-capture";
 
+import type { R2Bucket } from "@cloudflare/workers-types";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applySecurityHeaders } from "./lib/security-headers.server";
+import { syncQuestionBankFromR2 } from "./lib/quiz/question-sync.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -53,5 +55,20 @@ export default {
         }),
       );
     }
+  },
+
+  // Daily question-bank refresh — see wrangler.jsonc's triggers.crons for the
+  // schedule and src/lib/quiz/question-sync.server.ts for what this does.
+  async scheduled(_event: unknown, env: { STORAGE?: R2Bucket }, ctx: { waitUntil(p: Promise<unknown>): void }) {
+    if (!env.STORAGE) {
+      console.error("Scheduled question-bank sync skipped: no STORAGE (R2) binding");
+      return;
+    }
+    ctx.waitUntil(
+      syncQuestionBankFromR2(env.STORAGE).then((report) => {
+        if (!report.ok) console.error("Question-bank sync failed:", report.error);
+        else console.log(`Question-bank sync ok: ${report.questionCount} questions, ${report.categoryCount} categories`);
+      }),
+    );
   },
 };

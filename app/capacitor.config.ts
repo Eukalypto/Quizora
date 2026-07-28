@@ -6,7 +6,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 // — see wrangler.jsonc), so the WebView loads the deployed app directly
 // instead of a local `webDir` bundle.
 const config: CapacitorConfig = {
-  appId: 'com.quizora.app',
+  appId: 'com.eukalypto.quizora',
   appName: 'Quizora',
   webDir: 'mobile-shell',
   server: {

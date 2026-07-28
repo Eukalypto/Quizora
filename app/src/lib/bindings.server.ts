@@ -24,6 +24,9 @@ type AppEnv = {
   CONTAINER?: DurableObjectNamespace;
   HF_ENV?: string;
   APP_SLUG?: string;
+  // Shared secret gating the manual question-bank sync trigger — see
+  // src/routes/api/admin/sync-questions.ts. Set via `wrangler secret put`.
+  QUESTION_SYNC_TOKEN?: string;
 };
 
 export function bindings(): AppEnv {

@@ -1,17 +1,14 @@
-import combinedCategoriesJson from "@/data/combined-categories.json";
 import type { Question } from "@/lib/categories";
+import type { RatioComponent } from "@/lib/quiz/question-merge";
 
-export interface RatioComponent {
-  tags: string[];
-  ratio: number;
-}
+export type { RatioComponent };
 
-/** Combined-category component ratios, keyed by top-level tag — see the
- * Drive index's ratio column. Only categories built from "one topic across
- * every continent" (History, Geography, Traditions, Arts, Literature,
- * Sciences, Sports) are present; see merge-drive-questions.mjs for why the
- * others (topic-only combos, continent catch-alls) aren't mapped yet. */
-export const COMBINED_CATEGORY_RATIOS = combinedCategoriesJson as Record<string, RatioComponent[]>;
+// Combined-category component ratios now come from getQuestionBank()
+// (src/lib/question-bank.ts), which loads them from R2 — see that file and
+// question-sync.server.ts. Only categories built from "one topic across
+// every continent" (History, Geography, Traditions, Arts, Literature,
+// Sciences, Sports) are present; see question-merge.ts for why the others
+// (topic-only combos, continent catch-alls) aren't mapped yet.
 
 function defaultShuffle<T>(items: T[]): T[] {
   const arr = [...items];

@@ -1,4 +1,4 @@
-package com.quizora.app;
+package com.eukalypto.quizora;
 
 import com.getcapacitor.BridgeActivity;
 

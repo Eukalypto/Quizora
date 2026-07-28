@@ -17,6 +17,7 @@ import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as ApiUserRouteImport } from './routes/api/user'
 import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar-upload'
+import { Route as ApiAdminSyncQuestionsRouteImport } from './routes/api/admin/sync-questions'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -58,6 +59,11 @@ const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
   path: '/api/avatar-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminSyncQuestionsRoute = ApiAdminSyncQuestionsRouteImport.update({
+  id: '/api/admin/sync-questions',
+  path: '/api/admin/sync-questions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-questions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-questions'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-questions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   ApiUserRoute: typeof ApiUserRoute
   SignInSplatRoute: typeof SignInSplatRoute
   SignUpSplatRoute: typeof SignUpSplatRoute
+  ApiAdminSyncQuestionsRoute: typeof ApiAdminSyncQuestionsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAvatarUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/sync-questions': {
+      id: '/api/admin/sync-questions'
+      path: '/api/admin/sync-questions'
+      fullPath: '/api/admin/sync-questions'
+      preLoaderRoute: typeof ApiAdminSyncQuestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUserRoute: ApiUserRoute,
   SignInSplatRoute: SignInSplatRoute,
   SignUpSplatRoute: SignUpSplatRoute,
+  ApiAdminSyncQuestionsRoute: ApiAdminSyncQuestionsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

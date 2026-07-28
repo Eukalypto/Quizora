@@ -1,10 +1,10 @@
 import type { D1Database } from "@cloudflare/workers-types";
-import { ALL_QUESTIONS } from "@/lib/question-bank";
+import { getQuestionBank } from "@/lib/question-bank";
 import type { Difficulty, Question } from "@/lib/categories";
 import { levelToDifficulty } from "@/lib/categories";
 import { evaluateBadges } from "./badges";
 import { getOrGenerateMysteryPoolQuestion, pickSharedMysteryQuestion, type MysteryPoolQuestion } from "./mystery-pool.server";
-import { COMBINED_CATEGORY_RATIOS, pickWeighted } from "./ratio-sampling";
+import { pickWeighted } from "./ratio-sampling";
 import { getLevel, getXpInLevel, nextStreak, normalizedScore, todayIso, isoWeek, xpForGame } from "./scoring";
 import { AI_QUESTION_COUNT, buildDailySet, buildWeeklySet, topLevelTagsForQuestions, WEEKLY_SET_SIZE } from "./session";
 import type {
@@ -211,6 +211,7 @@ export async function buildFreePlaySetForUser(
 ): Promise<Question[]> {
   await ensureUser(db, userId);
 
+  const { questions: ALL_QUESTIONS, combinedCategories: COMBINED_CATEGORY_RATIOS } = await getQuestionBank();
   const pool = ALL_QUESTIONS.filter(
     (q) => q.level === level && categoryTags.every((tag) => q.subcategories.includes(tag)),
   );
@@ -312,7 +313,7 @@ export async function buildDailySetForUser(db: D1Database, userId: string): Prom
 
   const seenIds = await getSeenQuestionIds(db, userId);
   const excludeIds = new Set([...seenIds, ...weeklyIds]);
-  const jsonQuestions = buildDailySet(excludeIds);
+  const jsonQuestions = await buildDailySet(excludeIds);
   await markQuestionsSeen(db, userId, jsonQuestions.map((q) => q.id));
 
   const aiPicks: Question[] = [];
@@ -347,11 +348,12 @@ export async function buildWeeklySetShared(db: D1Database, week: string = isoWee
     // reproduce the same set; see the comment on the prior single-query
     // version of this function this replaced).
     const idSet = new Set(thisWeekIds);
+    const { questions: ALL_QUESTIONS } = await getQuestionBank();
     jsonQuestions = ALL_QUESTIONS.filter((q) => idSet.has(q.id));
   } else {
     const usedRows = await db.prepare(`SELECT question_id FROM quiz_weekly_used_questions`).all<{ question_id: number }>();
     const usedIds = new Set((usedRows.results ?? []).map((r) => r.question_id));
-    jsonQuestions = buildWeeklySet(week, usedIds);
+    jsonQuestions = await buildWeeklySet(week, usedIds);
     const inserts = jsonQuestions.map((q) =>
       db.prepare(`INSERT OR IGNORE INTO quiz_weekly_used_questions (question_id, week) VALUES (?, ?)`).bind(q.id, week),
     );
@@ -375,6 +377,7 @@ export async function pickMultiplayerQuestionsForUser(
 ): Promise<Question[]> {
   await ensureUser(db, userId);
 
+  const { questions: ALL_QUESTIONS, combinedCategories: COMBINED_CATEGORY_RATIOS } = await getQuestionBank();
   const seenRows = await db
     .prepare(`SELECT question_id, seen_at FROM quiz_seen_questions WHERE user_id = ?`)
     .bind(userId)
@@ -512,7 +515,7 @@ export async function submitGameResult(
     );
   }
 
-  const playedTags = topLevelTagsForQuestions(input.questionIds);
+  const playedTags = await topLevelTagsForQuestions(input.questionIds);
   for (const tag of playedTags) {
     statements.push(
       db
