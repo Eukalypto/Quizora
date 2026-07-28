@@ -22,6 +22,9 @@ export interface MysterySubject {
   id: string;
   level: 1 | 2 | 3;
   category: MysteryCategory;
+  // What image to curate/source for this subject — a content-authoring aid
+  // now (images are curated, not AI-generated; see mystery-sync.server.ts),
+  // not fed into a live generation prompt anymore.
   promptHint: string;
   options: [string, string, string, string];
   correctIndex: 0 | 1 | 2 | 3;
@@ -68,13 +71,6 @@ export function pickMysterySubject(level: 1 | 2 | 3, excludeIds: string[]): Myst
   const pool = MYSTERY_SUBJECTS.filter((s) => s.level === level && !excludeIds.includes(s.id));
   const source = pool.length > 0 ? pool : MYSTERY_SUBJECTS.filter((s) => s.level === level);
   return source[Math.floor(Math.random() * source.length)];
-}
-
-export function buildMysteryPrompt(subject: MysterySubject): string {
-  return (
-    `Photorealistic, no text, no watermark, no logos, no visible people: ${subject.promptHint}. ` +
-    `Clean, clear, well-lit single-subject composition, square framing.`
-  );
 }
 
 /** Shuffle the 4 options, returning the new order and the new correct index. */

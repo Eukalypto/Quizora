@@ -17,7 +17,10 @@ import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as ApiUserRouteImport } from './routes/api/user'
 import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar-upload'
+import { Route as ApiMysteryImageSplatRouteImport } from './routes/api/mystery-image.$'
+import { Route as ApiAvatarImageUserIdRouteImport } from './routes/api/avatar-image.$userId'
 import { Route as ApiAdminSyncQuestionsRouteImport } from './routes/api/admin/sync-questions'
+import { Route as ApiAdminSyncMysteryImagesRouteImport } from './routes/api/admin/sync-mystery-images'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -59,11 +62,27 @@ const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
   path: '/api/avatar-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMysteryImageSplatRoute = ApiMysteryImageSplatRouteImport.update({
+  id: '/api/mystery-image/$',
+  path: '/api/mystery-image/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAvatarImageUserIdRoute = ApiAvatarImageUserIdRouteImport.update({
+  id: '/api/avatar-image/$userId',
+  path: '/api/avatar-image/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminSyncQuestionsRoute = ApiAdminSyncQuestionsRouteImport.update({
   id: '/api/admin/sync-questions',
   path: '/api/admin/sync-questions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminSyncMysteryImagesRoute =
+  ApiAdminSyncMysteryImagesRouteImport.update({
+    id: '/api/admin/sync-mystery-images',
+    path: '/api/admin/sync-mystery-images',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,7 +93,10 @@ export interface FileRoutesByFullPath {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-mystery-images': typeof ApiAdminSyncMysteryImagesRoute
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
+  '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
+  '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -85,7 +107,10 @@ export interface FileRoutesByTo {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-mystery-images': typeof ApiAdminSyncMysteryImagesRoute
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
+  '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
+  '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -97,7 +122,10 @@ export interface FileRoutesById {
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
   '/sign-up/$': typeof SignUpSplatRoute
+  '/api/admin/sync-mystery-images': typeof ApiAdminSyncMysteryImagesRoute
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
+  '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
+  '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,7 +138,10 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-mystery-images'
     | '/api/admin/sync-questions'
+    | '/api/avatar-image/$userId'
+    | '/api/mystery-image/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -121,7 +152,10 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-mystery-images'
     | '/api/admin/sync-questions'
+    | '/api/avatar-image/$userId'
+    | '/api/mystery-image/$'
   id:
     | '__root__'
     | '/'
@@ -132,7 +166,10 @@ export interface FileRouteTypes {
     | '/api/user'
     | '/sign-in/$'
     | '/sign-up/$'
+    | '/api/admin/sync-mystery-images'
     | '/api/admin/sync-questions'
+    | '/api/avatar-image/$userId'
+    | '/api/mystery-image/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,7 +181,10 @@ export interface RootRouteChildren {
   ApiUserRoute: typeof ApiUserRoute
   SignInSplatRoute: typeof SignInSplatRoute
   SignUpSplatRoute: typeof SignUpSplatRoute
+  ApiAdminSyncMysteryImagesRoute: typeof ApiAdminSyncMysteryImagesRoute
   ApiAdminSyncQuestionsRoute: typeof ApiAdminSyncQuestionsRoute
+  ApiAvatarImageUserIdRoute: typeof ApiAvatarImageUserIdRoute
+  ApiMysteryImageSplatRoute: typeof ApiMysteryImageSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,11 +245,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAvatarUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/mystery-image/$': {
+      id: '/api/mystery-image/$'
+      path: '/api/mystery-image/$'
+      fullPath: '/api/mystery-image/$'
+      preLoaderRoute: typeof ApiMysteryImageSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/avatar-image/$userId': {
+      id: '/api/avatar-image/$userId'
+      path: '/api/avatar-image/$userId'
+      fullPath: '/api/avatar-image/$userId'
+      preLoaderRoute: typeof ApiAvatarImageUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/sync-questions': {
       id: '/api/admin/sync-questions'
       path: '/api/admin/sync-questions'
       fullPath: '/api/admin/sync-questions'
       preLoaderRoute: typeof ApiAdminSyncQuestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/sync-mystery-images': {
+      id: '/api/admin/sync-mystery-images'
+      path: '/api/admin/sync-mystery-images'
+      fullPath: '/api/admin/sync-mystery-images'
+      preLoaderRoute: typeof ApiAdminSyncMysteryImagesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -224,7 +285,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUserRoute: ApiUserRoute,
   SignInSplatRoute: SignInSplatRoute,
   SignUpSplatRoute: SignUpSplatRoute,
+  ApiAdminSyncMysteryImagesRoute: ApiAdminSyncMysteryImagesRoute,
   ApiAdminSyncQuestionsRoute: ApiAdminSyncQuestionsRoute,
+  ApiAvatarImageUserIdRoute: ApiAvatarImageUserIdRoute,
+  ApiMysteryImageSplatRoute: ApiMysteryImageSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

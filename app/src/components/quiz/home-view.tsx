@@ -1,4 +1,4 @@
-import { Send, Swords, User as UserIcon } from "lucide-react";
+import { Send, Swords, User as UserIcon, Wand2 } from "lucide-react";
 import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
 import { Typography } from "@higgsfield/quanta/typography";
@@ -9,6 +9,7 @@ export function HomeView({
   avatarUrl,
   onOpenSolo,
   onOpenMultiplayer,
+  onOpenMystery,
   onOpenChallenge,
   onOpenProfile,
 }: {
@@ -16,6 +17,7 @@ export function HomeView({
   avatarUrl?: string | null;
   onOpenSolo: () => void;
   onOpenMultiplayer: () => void;
+  onOpenMystery: () => void;
   onOpenChallenge: () => void;
   onOpenProfile?: () => void;
 }) {
@@ -56,6 +58,9 @@ export function HomeView({
           </Button>
           <Button variant="secondary" size="lg" start={<Send className="size-4" aria-hidden />} onClick={onOpenChallenge}>
             Challenge
+          </Button>
+          <Button variant="marketingPrimary" size="lg" start={<Wand2 className="size-4" aria-hidden />} onClick={onOpenMystery}>
+            Mystery Round
           </Button>
           <Button variant="secondary" size="lg" start={<Swords className="size-4" aria-hidden />} onClick={onOpenMultiplayer}>
             Live Play

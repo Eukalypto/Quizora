@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createMediaContext, safeUploadMedia } from "@higgsfield/fnf/media";
-import { createWorkflowPlatformAdapter } from "@higgsfield/fnf/workflow-platform";
+import { bindings } from "@/lib/bindings.server";
 import { requireCurrentUser } from "@/lib/auth.server";
+import { setAvatarUrl } from "@/lib/quiz/db.server";
 
-const MAX_UPLOAD_BYTES = 15 * 1024 * 1024; // 15MB — generous for a phone photo, small enough to stay fast
+const MAX_UPLOAD_BYTES = 2 * 1024 * 1024; // 2MB — generous for a composited PNG avatar
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 }
 
-// Reference-photo upload for the AI avatar creator. Per the fnf SDK's
-// binary-upload rule: the browser File never goes through a server-fn/JSON
-// boundary — it's posted here as multipart FormData, read server-side, and
-// only the resulting submit-ready MediaRef goes back to the client.
+// Receives the client-composited avatar (see avatar-creator-modal.tsx's
+// canvas flatten step) as multipart FormData — binary upload, so it bypasses
+// the server-fn/JSON boundary same as before. Stores it in R2 under a
+// deterministic per-user key (re-saving just overwrites, no cleanup needed)
+// and updates quiz_users.avatar_url to the route that serves it back out
+// (see avatar-image.$userId.ts) — no more Higgsfield/fnf involved.
 export const Route = createFileRoute("/api/avatar-upload")({
   server: {
     handlers: {
@@ -20,18 +22,23 @@ export const Route = createFileRoute("/api/avatar-upload")({
         const auth = await requireCurrentUser();
         if (!auth.ok) return json({ error: "unauthorized" }, 401);
 
+        const { STORAGE, DB } = bindings();
+        if (!STORAGE || !DB) return json({ error: "bindings_missing" }, 500);
+
         const form = await request.formData();
         const file = form.get("file");
-        if (!(file instanceof File)) return json({ error: "missing file" }, 400);
+        if (!(file instanceof File)) return json({ error: "missing_file" }, 400);
         if (file.size > MAX_UPLOAD_BYTES) return json({ error: "file_too_large" }, 400);
 
-        const adapter = createWorkflowPlatformAdapter({ baseUrl: "https://fnf.internal" });
-        const ctx = createMediaContext({ mediaAdapter: adapter });
         const bytes = await file.arrayBuffer();
-        const result = await safeUploadMedia(ctx, { source: bytes, filename: file.name, type: "image", forceIpCheck: true });
-        if (!result.ok) return json({ error: result.error.code }, 502);
+        await STORAGE.put(`user-avatars/${auth.user.id}.png`, bytes, {
+          httpMetadata: { contentType: "image/png" },
+        });
 
-        return json({ ref: result.result.ref });
+        const url = `/api/avatar-image/${auth.user.id}`;
+        await setAvatarUrl(DB, auth.user.id, url);
+
+        return json({ url });
       },
     },
   },

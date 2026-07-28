@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Button } from "@higgsfield/quanta/button";
 import { Loader } from "@higgsfield/quanta/loader";
 import { Media } from "@higgsfield/quanta/media";
@@ -7,12 +7,7 @@ import { Modal } from "@higgsfield/quanta/modal";
 import { Progress } from "@higgsfield/quanta/progress";
 import { toast } from "@higgsfield/quanta/sonner";
 import { Typography } from "@higgsfield/quanta/typography";
-import {
-  generateMysteryQuestion,
-  getMysteryDailyStatus,
-  getMysteryQuestionCost,
-  replenishMysteryPool,
-} from "@/lib/api/mystery.functions";
+import { drawMysteryQuestion, getMysteryDailyStatus } from "@/lib/api/mystery.functions";
 import {
   MYSTERY_CATEGORY_EMOJI,
   MYSTERY_CATEGORY_LABEL,
@@ -30,7 +25,10 @@ import type { GameResult } from "@/components/quiz/game-session";
 const LEVEL_LABEL: Record<1 | 2 | 3, string> = { 1: "Easy", 2: "Medium", 3: "Hard" };
 const MAX_BLUR_PX = 24;
 
-type Phase = "loading" | "gated" | "confirm" | "generating" | "answering" | "result" | "error";
+// Curated images are an instant DB draw, not a generation wait — "loading" is
+// reused for both the first question and every "Next" (no separate
+// confirm/generating phases like the old AI-generation flow needed).
+type Phase = "loading" | "gated" | "empty" | "answering" | "result";
 
 interface CurrentQuestion {
   subjectId: string;
@@ -49,7 +47,6 @@ export function MysteryRoundView({
   onExit: () => void;
 }) {
   const [phase, setPhase] = useState<Phase>("loading");
-  const [cost, setCost] = useState<number | null>(null);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [dailyLimit, setDailyLimit] = useState<number | null>(null);
   const [streakState, setStreakState] = useState<MysteryStreakState>({ level: 1, correctStreak: 0, wrongStreak: 0 });
@@ -70,29 +67,17 @@ export function MysteryRoundView({
     };
   }, []);
 
-  useEffect(() => {
-    Promise.all([getMysteryQuestionCost(), getMysteryDailyStatus()])
-      .then(([costRes, statusRes]) => {
-        setCost(costRes.credits);
-        setRemaining(statusRes.remaining);
-        setDailyLimit(statusRes.limit);
-        setPhase(statusRes.remaining <= 0 ? "gated" : "confirm");
-      })
-      .catch(() => setPhase("confirm"));
-  }, []);
-
   const fetchQuestion = async (level: 1 | 2 | 3, excludeIds: string[]) => {
-    setPhase("generating");
+    setPhase("loading");
     try {
-      const result = await generateMysteryQuestion({ data: { level, excludeIds } });
+      const result = await drawMysteryQuestion({ data: { level, excludeIds } });
       if (!result.ok) {
         if (result.errorCode === "daily_limit_reached") {
           setRemaining(0);
           setPhase("gated");
           return;
         }
-        toast.error("Couldn't generate the mystery image", { description: "Try again in a moment." });
-        setPhase("error");
+        setPhase("empty");
         return;
       }
       setQuestion({
@@ -122,18 +107,25 @@ export function MysteryRoundView({
           return s + 1;
         });
       }, 1000);
-
-      // Fire-and-forget: keep the shared bank topped up for next time.
-      replenishMysteryPool({ data: { level: result.level } }).catch(() => {});
     } catch {
-      toast.error("Couldn't generate the mystery image", { description: "Try again in a moment." });
-      setPhase("error");
+      toast.error("Couldn't load the mystery image", { description: "Check your connection and try again." });
+      setPhase("empty");
     }
   };
 
-  const start = () => {
-    fetchQuestion(1, []);
-  };
+  useEffect(() => {
+    getMysteryDailyStatus()
+      .then((status) => {
+        setRemaining(status.remaining);
+        setDailyLimit(status.limit);
+        if (status.remaining <= 0) {
+          setPhase("gated");
+          return;
+        }
+        fetchQuestion(1, []);
+      })
+      .catch(() => fetchQuestion(1, []));
+  }, []);
 
   const answer = (index: number) => {
     if (!question || phase !== "answering") return;
@@ -178,7 +170,7 @@ export function MysteryRoundView({
   const endRound = () => {
     onComplete({
       mode: "freeplay",
-      categoryLabel: "AI Mystery Round",
+      categoryLabel: "Mystery Round",
       correct: tally.correct,
       total: tally.total,
       timeBonusTotal: 0,
@@ -187,11 +179,37 @@ export function MysteryRoundView({
     });
   };
 
-  if (phase === "loading") {
+  if (phase === "loading" && !question) {
     return (
       <div className="grid h-full place-items-center">
         <Loader variant="stars" size="lg" />
       </div>
+    );
+  }
+
+  if (phase === "empty") {
+    const played = tally.total > 0;
+    return (
+      <Modal.Root open onOpenChange={(open) => !open && (played ? endRound() : onExit())}>
+        <Modal.Content size="sm">
+          <Modal.Header>
+            <Modal.Title>No mystery images yet</Modal.Title>
+            <Modal.CloseButton onClick={() => (played ? endRound() : onExit())} />
+          </Modal.Header>
+          <Modal.Body>
+            <Typography as="p" variant="body-sm-regular" color="secondary">
+              We're still curating images for this round — check back soon.
+            </Typography>
+          </Modal.Body>
+          <Modal.Footer>
+            <Modal.FooterActions>
+              <Button variant="secondary" size="sm" onClick={() => (played ? endRound() : onExit())}>
+                {played ? "See results" : "Back"}
+              </Button>
+            </Modal.FooterActions>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal.Root>
     );
   }
 
@@ -213,41 +231,6 @@ export function MysteryRoundView({
             <Modal.FooterActions>
               <Button variant="secondary" size="sm" onClick={() => (played ? endRound() : onExit())}>
                 {played ? "See results" : "Back"}
-              </Button>
-            </Modal.FooterActions>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal.Root>
-    );
-  }
-
-  if (phase === "confirm") {
-    return (
-      <Modal.Root open onOpenChange={(open) => !open && onExit()}>
-        <Modal.Content size="sm">
-          <Modal.Header>
-            <Modal.Title>AI Mystery Round</Modal.Title>
-            <Modal.CloseButton onClick={onExit} />
-          </Modal.Header>
-          <Modal.Body>
-            <div className="flex flex-col gap-2">
-              <Typography as="p" variant="body-sm-regular" color="secondary">
-                Every question generates a brand-new mystery image with Higgsfield — guess what it shows. Two
-                correct in a row levels you up; two wrong in a row levels you down. Harder levels score more.
-              </Typography>
-              <Typography as="p" variant="caption-sm-medium" color="secondary">
-                {cost != null ? `Each image costs ${cost} credit${cost === 1 ? "" : "s"} to generate. ` : ""}
-                {remaining != null ? `${remaining} of ${dailyLimit ?? 7} plays left today.` : ""}
-              </Typography>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Modal.FooterActions>
-              <Button variant="ghost" size="sm" onClick={onExit}>
-                Cancel
-              </Button>
-              <Button variant="marketingPrimary" size="sm" start={<Sparkles className="size-4" aria-hidden />} onClick={start}>
-                Start
               </Button>
             </Modal.FooterActions>
           </Modal.Footer>
@@ -290,21 +273,9 @@ export function MysteryRoundView({
         </div>
       </div>
 
-      {phase === "generating" ? (
+      {phase === "loading" ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-3 py-12">
           <Loader variant="stars" size="lg" />
-          <Typography as="span" variant="caption-sm-regular" color="secondary">
-            Conjuring a mystery image…
-          </Typography>
-        </div>
-      ) : phase === "error" ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 py-12">
-          <Typography as="p" variant="body-sm-regular" color="danger">
-            Something went wrong generating that image.
-          </Typography>
-          <Button variant="secondary" size="sm" onClick={() => fetchQuestion(streakState.level, seenIds)}>
-            Retry
-          </Button>
         </div>
       ) : question ? (
         <>

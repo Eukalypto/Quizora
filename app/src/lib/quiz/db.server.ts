@@ -3,7 +3,7 @@ import { getQuestionBank } from "@/lib/question-bank";
 import type { Difficulty, Question } from "@/lib/categories";
 import { levelToDifficulty } from "@/lib/categories";
 import { evaluateBadges } from "./badges";
-import { getOrGenerateMysteryPoolQuestion, pickSharedMysteryQuestion, type MysteryPoolQuestion } from "./mystery-pool.server";
+import { getMysteryPoolQuestion, pickSharedMysteryQuestion, type MysteryPoolQuestion } from "./mystery-pool.server";
 import { pickWeighted } from "./ratio-sampling";
 import { getLevel, getXpInLevel, nextStreak, normalizedScore, todayIso, isoWeek, xpForGame } from "./scoring";
 import { AI_QUESTION_COUNT, buildDailySet, buildWeeklySet, topLevelTagsForQuestions, WEEKLY_SET_SIZE } from "./session";
@@ -320,7 +320,7 @@ export async function buildDailySetForUser(db: D1Database, userId: string): Prom
   const aiPickedSubjectIds: string[] = [];
   for (let i = 0; i < AI_QUESTION_COUNT; i++) {
     const exclude = [...weeklySubjectIds, ...aiPickedSubjectIds];
-    const picked = await getOrGenerateMysteryPoolQuestion(db, userId, randomLevel(), exclude);
+    const picked = await getMysteryPoolQuestion(db, userId, randomLevel(), exclude);
     if (picked) {
       aiPicks.push(aiQuestionToQuestion(picked));
       aiPickedSubjectIds.push(picked.subjectId);

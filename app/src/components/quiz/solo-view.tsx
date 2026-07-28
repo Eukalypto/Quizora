@@ -1,13 +1,18 @@
 import { useMemo, useState } from "react";
-import { CalendarDays, Shuffle, Sparkles } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { CalendarDays, Shuffle, Sparkles, Wand2 } from "lucide-react";
 import { Button } from "@higgsfield/quanta/button";
+import { Media } from "@higgsfield/quanta/media";
 import { Typography } from "@higgsfield/quanta/typography";
 import { Page, PageHeader, Panel, Section, VolumetricIconTile } from "@/components/custom-ui";
 import { CategoryPicker, DifficultyTabs } from "@/components/quiz/category-picker";
+import { getMysteryDailyStatus, getMysteryGallery } from "@/lib/api/mystery.functions";
 import { ALL_CATEGORIES } from "@/lib/category-list";
 import type { Category, Difficulty } from "@/lib/categories";
 import { isoWeek, todayIso } from "@/lib/quiz/scoring";
 import type { UserSnapshot } from "@/lib/quiz/types";
+
+const GALLERY_PREVIEW_COUNT = 4;
 
 /** Shown both next to the difficulty tabs and again below the category grid
  * — same button, same state, just duplicated for reachability at either
@@ -41,14 +46,22 @@ export function SoloView({
   onStartDaily,
   onStartWeekly,
   onStartFreePlay,
+  onStartMystery,
+  onOpenMysteryGallery,
 }: {
   snapshot: UserSnapshot;
   onStartDaily: () => void;
   onStartWeekly: () => void;
   onStartFreePlay: (categoryKey: string, difficulty: Difficulty) => void;
+  onStartMystery: () => void;
+  onOpenMysteryGallery: () => void;
 }) {
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
   const [categoryKey, setCategoryKey] = useState<string | null>(null);
+  const galleryQuery = useQuery({ queryKey: ["mystery-gallery"], queryFn: () => getMysteryGallery() });
+  const galleryPreview = (galleryQuery.data ?? []).slice(0, GALLERY_PREVIEW_COUNT);
+  const mysteryStatusQuery = useQuery({ queryKey: ["mystery-daily-status"], queryFn: () => getMysteryDailyStatus() });
+  const mysteryDoneToday = (mysteryStatusQuery.data?.remaining ?? 1) <= 0;
 
   const dailyDoneToday = snapshot.dailyDone === todayIso();
   const weeklyDoneThisWeek = snapshot.weeklyDone === isoWeek();
@@ -97,6 +110,58 @@ export function SoloView({
           <Button variant="secondary" size="sm" disabled={weeklyDoneThisWeek} onClick={onStartWeekly}>
             {weeklyDoneThisWeek ? "Done this week" : "Play"}
           </Button>
+        </Panel>
+      </Section>
+
+      <Section
+        title="Mystery Round"
+        description="A curated image every question — guess what it shows."
+      >
+        <Panel className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <VolumetricIconTile icon={Wand2} size="md" />
+              <div className="flex flex-col gap-0.5">
+                <Typography as="span" variant="body-md-medium" color="primary">
+                  Guess the mystery image
+                </Typography>
+                <Typography as="span" variant="caption-sm-regular" color="tertiary">
+                  Difficulty adapts as you play — the better you do, the harder it gets.
+                </Typography>
+              </div>
+            </div>
+            <Button variant="marketingPrimary" size="sm" disabled={mysteryDoneToday} onClick={onStartMystery}>
+              {mysteryDoneToday ? "Done for today" : "Play"}
+            </Button>
+          </div>
+
+          {galleryPreview.length > 0 ? (
+            <button
+              type="button"
+              onClick={onOpenMysteryGallery}
+              className="flex items-center gap-3 rounded-q-400 border border-q-border-subtle bg-q-background-secondary px-3 py-2.5 text-left transition-colors hover:bg-q-background-tertiary"
+            >
+              <div className="flex -space-x-3">
+                {galleryPreview.map((item) => (
+                  <Media.Root key={item.id} ratio="square" rounded="full" className="size-9 shrink-0 border-2 border-q-border-subtle">
+                    <Media.Image src={item.mediaUrl} alt="" fit="cover" />
+                  </Media.Root>
+                ))}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <Typography as="span" variant="caption-sm-medium" color="primary">
+                  Browse the gallery
+                </Typography>
+                <Typography as="span" variant="caption-xs-regular" color="tertiary">
+                  Every mystery image from your games, revealed
+                </Typography>
+              </div>
+            </button>
+          ) : (
+            <Button variant="ghost" size="xs" className="self-start" onClick={onOpenMysteryGallery}>
+              Gallery
+            </Button>
+          )}
         </Panel>
       </Section>
 

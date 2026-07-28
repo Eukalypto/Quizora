@@ -1,148 +1,104 @@
-import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent, ReactElement } from "react";
-import { Mic, Square } from "lucide-react";
+import { useRef, useState } from "react";
+import type { ReactElement } from "react";
 import { Button } from "@higgsfield/quanta/button";
 import { Loader } from "@higgsfield/quanta/loader";
-import { Media } from "@higgsfield/quanta/media";
 import { Modal } from "@higgsfield/quanta/modal";
 import { toast } from "@higgsfield/quanta/sonner";
 import { Tabs } from "@higgsfield/quanta/tabs";
 import { Typography } from "@higgsfield/quanta/typography";
-import { PromptBox } from "@/components/prompt-box";
-import { generateAvatar, getAvatarCost } from "@/lib/api/avatar.functions";
+import {
+  AVATAR_ACCESSORIES,
+  AVATAR_BACKGROUNDS,
+  AVATAR_FACES,
+  AVATAR_HATS,
+  DEFAULT_AVATAR_CONFIG,
+  drawAvatarToCanvas,
+  findAccessory,
+  findBackground,
+  findFace,
+  findHat,
+  type AvatarConfig,
+} from "@/lib/quiz/avatar-pieces";
+import { cn } from "@/lib/utils";
 
-type Mode = "text" | "photo" | "voice";
+type Layer = "background" | "face" | "hat" | "accessory";
 
-// Minimal ambient shape for the Web Speech API — not in TS's default DOM lib,
-// and only Chrome/Edge/Safari ship it (as `webkitSpeechRecognition`); Firefox
-// has no implementation, hence the `supported` feature-check throughout.
-interface SpeechRecognitionLike extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start: () => void;
-  stop: () => void;
-  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
-  onerror: (() => void) | null;
-  onend: (() => void) | null;
+const PREVIEW_SIZE = 160;
+const EXPORT_SIZE = 512;
+
+function AvatarPreview({ config, size = PREVIEW_SIZE }: { config: AvatarConfig; size?: number }) {
+  const bg = findBackground(config.background);
+  const face = findFace(config.face);
+  const hat = findHat(config.hat);
+  const accessory = findAccessory(config.accessory);
+  return (
+    <div
+      className="relative shrink-0 overflow-hidden rounded-q-full"
+      style={{ width: size, height: size, background: `linear-gradient(135deg, ${bg.colors[0]}, ${bg.colors[1]})` }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center" style={{ fontSize: size * 0.52 }}>
+        {face.emoji}
+      </div>
+      {hat ? (
+        <div className="absolute left-1/2 -translate-x-1/2" style={{ top: size * 0.06, fontSize: size * 0.3 }}>
+          {hat.emoji}
+        </div>
+      ) : null}
+      {accessory ? (
+        <div className="absolute" style={{ left: size * 0.66, top: size * 0.66, fontSize: size * 0.24 }}>
+          {accessory.emoji}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
-function useSpeechToText(onTranscript: (text: string) => void) {
-  const [recording, setRecording] = useState(false);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-
-  const supported =
-    typeof window !== "undefined" &&
-    ("SpeechRecognition" in window || "webkitSpeechRecognition" in window);
-
-  const start = () => {
-    if (!supported) return;
-    const Ctor = ((window as unknown as Record<string, unknown>).SpeechRecognition ??
-      (window as unknown as Record<string, unknown>).webkitSpeechRecognition) as new () => SpeechRecognitionLike;
-    const recognition = new Ctor();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
-    recognition.onresult = (event) => {
-      let text = "";
-      for (let i = 0; i < event.results.length; i++) text += event.results[i][0].transcript;
-      onTranscript(text);
-    };
-    recognition.onerror = () => setRecording(false);
-    recognition.onend = () => setRecording(false);
-    recognitionRef.current = recognition;
-    recognition.start();
-    setRecording(true);
-  };
-
-  const stop = () => {
-    recognitionRef.current?.stop();
-    setRecording(false);
-  };
-
-  useEffect(() => () => recognitionRef.current?.stop(), []);
-
-  return { supported, recording, start, stop };
-}
-
-async function uploadReferencePhoto(file: File): Promise<{ id: string; type: string; url?: string; role?: string }> {
+async function uploadAvatarBlob(blob: Blob): Promise<string> {
   const form = new FormData();
-  form.append("file", file);
+  form.append("file", blob, "avatar.png");
   const res = await fetch("/api/avatar-upload", { method: "POST", body: form });
   const body = await res.json();
-  if (!res.ok || !body.ref) throw new Error(body.error ?? "upload_failed");
-  return body.ref;
+  if (!res.ok || !body.url) throw new Error(body.error ?? "upload_failed");
+  return body.url as string;
 }
 
 export function AvatarCreatorModal({ trigger, onSaved }: { trigger: ReactElement; onSaved: (avatarUrl: string) => void }) {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>("text");
-  const [prompt, setPrompt] = useState("");
-  const [cost, setCost] = useState<number | null>(null);
-  const [referenceFile, setReferenceFile] = useState<File | null>(null);
-  const [referencePreview, setReferencePreview] = useState<string | null>(null);
-  const [phase, setPhase] = useState<"idle" | "generating" | "result">("idle");
-  const [resultUrl, setResultUrl] = useState<string | null>(null);
-
-  const speech = useSpeechToText(setPrompt);
-
-  useEffect(() => {
-    if (!open) return;
-    getAvatarCost()
-      .then((res) => setCost(res.credits))
-      .catch(() => setCost(null));
-  }, [open]);
-
-  const reset = () => {
-    setMode("text");
-    setPrompt("");
-    setReferenceFile(null);
-    setReferencePreview(null);
-    setPhase("idle");
-    setResultUrl(null);
-    if (speech.recording) speech.stop();
-  };
+  const [layer, setLayer] = useState<Layer>("background");
+  const [config, setConfig] = useState<AvatarConfig>(DEFAULT_AVATAR_CONFIG);
+  const [saving, setSaving] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
-    if (!next) reset();
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setReferenceFile(file);
-    setReferencePreview(URL.createObjectURL(file));
-  };
-
-  const canGenerate = prompt.trim().length >= 2 && (mode !== "photo" || referenceFile != null);
-
-  const generate = async () => {
-    if (!canGenerate) return;
-    setPhase("generating");
-    try {
-      let referenceImage;
-      if (mode === "photo" && referenceFile) {
-        referenceImage = await uploadReferencePhoto(referenceFile);
-      }
-      const result = await generateAvatar({ data: { prompt: prompt.trim(), referenceImage } });
-      if (!result.ok) {
-        toast.error("Couldn't generate that avatar", { description: "Try again in a moment." });
-        setPhase("idle");
-        return;
-      }
-      setResultUrl(result.avatarUrl);
-      setPhase("result");
-    } catch {
-      toast.error("Couldn't generate that avatar", { description: "Try again in a moment." });
-      setPhase("idle");
+    if (!next) {
+      setLayer("background");
+      setConfig(DEFAULT_AVATAR_CONFIG);
     }
   };
 
-  const useResult = () => {
-    if (resultUrl) onSaved(resultUrl);
-    setOpen(false);
-    reset();
+  const save = async () => {
+    setSaving(true);
+    try {
+      const canvas = canvasRef.current;
+      if (!canvas) throw new Error("canvas_missing");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("canvas_context_missing");
+      canvas.width = EXPORT_SIZE;
+      canvas.height = EXPORT_SIZE;
+      drawAvatarToCanvas(ctx, EXPORT_SIZE, config);
+
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) throw new Error("export_failed");
+
+      const url = await uploadAvatarBlob(blob);
+      onSaved(url);
+      setOpen(false);
+    } catch {
+      toast.error("Couldn't save your avatar", { description: "Try again in a moment." });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -154,87 +110,137 @@ export function AvatarCreatorModal({ trigger, onSaved }: { trigger: ReactElement
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>
-          {phase === "result" && resultUrl ? (
-            <div className="flex flex-col items-center gap-4">
-              <Media.Root ratio="square" rounded="full" className="w-40">
-                <Media.Image src={resultUrl} alt="Your new avatar" fit="cover" />
-              </Media.Root>
-              <div className="flex gap-2">
-                <Button variant="secondary" size="sm" onClick={() => setPhase("idle")}>
-                  Try again
-                </Button>
-                <Button variant="primary" size="sm" onClick={useResult}>
-                  Use this avatar
-                </Button>
-              </div>
-            </div>
-          ) : phase === "generating" ? (
-            <div className="flex flex-col items-center justify-center gap-3 py-10">
-              <Loader variant="stars" size="lg" />
-              <Typography as="span" variant="caption-sm-regular" color="secondary">
-                Painting your avatar…
-              </Typography>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <Tabs.Root variant="segmented" value={mode} onValueChange={(v) => setMode(v as Mode)}>
-                <Tabs.List>
-                  <Tabs.Tab value="text">Text</Tabs.Tab>
-                  <Tabs.Tab value="photo">Photo</Tabs.Tab>
-                  <Tabs.Tab value="voice">Voice</Tabs.Tab>
-                </Tabs.List>
-              </Tabs.Root>
+          <div className="flex flex-col items-center gap-4">
+            <AvatarPreview config={config} />
+            <canvas ref={canvasRef} className="hidden" aria-hidden />
 
-              <PromptBox.Root>
-                <PromptBox.Body>
-                  <PromptBox.Field
-                    placeholder={
-                      mode === "photo"
-                        ? "Describe the style — e.g. \"as a watercolor painting\""
-                        : mode === "voice"
-                          ? "Tap record and describe your avatar…"
-                          : "Describe your avatar — e.g. \"a fox wearing a wizard hat, cartoon style\""
-                    }
-                    rows={3}
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
+            <Tabs.Root variant="segmented" value={layer} onValueChange={(v) => setLayer(v as Layer)} className="w-full">
+              <Tabs.List>
+                <Tabs.Tab value="background">Background</Tabs.Tab>
+                <Tabs.Tab value="face">Face</Tabs.Tab>
+                <Tabs.Tab value="hat">Hat</Tabs.Tab>
+                <Tabs.Tab value="accessory">Accessory</Tabs.Tab>
+              </Tabs.List>
+            </Tabs.Root>
+
+            {layer === "background" ? (
+              <div className="grid w-full grid-cols-4 gap-3">
+                {AVATAR_BACKGROUNDS.map((bg) => (
+                  <button
+                    key={bg.id}
+                    type="button"
+                    aria-label={bg.label}
+                    onClick={() => setConfig((c) => ({ ...c, background: bg.id }))}
+                    className={cn(
+                      "aspect-square rounded-q-full ring-offset-2 ring-offset-q-background-primary transition-shadow",
+                      config.background === bg.id ? "ring-2 ring-q-border-focus" : "hover:ring-2 hover:ring-q-border-subtle",
+                    )}
+                    style={{ background: `linear-gradient(135deg, ${bg.colors[0]}, ${bg.colors[1]})` }}
                   />
-                  {mode === "voice" ? (
-                    <PromptBox.Actions>
-                      {speech.supported ? (
-                        <PromptBox.Pill
-                          start={speech.recording ? <Square className="size-4" aria-hidden /> : <Mic className="size-4" aria-hidden />}
-                          onClick={speech.recording ? speech.stop : speech.start}
-                        >
-                          {speech.recording ? "Stop recording" : "Record"}
-                        </PromptBox.Pill>
-                      ) : (
-                        <Typography as="span" variant="caption-xs-regular" color="tertiary">
-                          Voice input isn't supported in this browser — type your prompt instead.
-                        </Typography>
-                      )}
-                    </PromptBox.Actions>
-                  ) : null}
-                </PromptBox.Body>
+                ))}
+              </div>
+            ) : null}
 
-                {mode === "photo" ? (
-                  <PromptBox.Uploads>
-                    <PromptBox.Upload label="Reference photo" src={referencePreview ?? undefined} render={<label />}>
-                      <input type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
-                    </PromptBox.Upload>
-                  </PromptBox.Uploads>
-                ) : null}
+            {layer === "face" ? (
+              <div className="grid w-full grid-cols-5 gap-2">
+                {AVATAR_FACES.map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    aria-label={f.label}
+                    onClick={() => setConfig((c) => ({ ...c, face: f.id }))}
+                    className={cn(
+                      "flex aspect-square items-center justify-center rounded-q-400 border text-2xl transition-colors",
+                      config.face === f.id
+                        ? "border-q-border-focus bg-q-background-secondary"
+                        : "border-q-border-subtle hover:bg-q-background-secondary",
+                    )}
+                  >
+                    {f.emoji}
+                  </button>
+                ))}
+              </div>
+            ) : null}
 
-                <PromptBox.Generate
-                  cost={cost != null ? `${cost} credit${cost === 1 ? "" : "s"}` : undefined}
-                  disabled={!canGenerate}
-                  onClick={generate}
+            {layer === "hat" ? (
+              <div className="grid w-full grid-cols-6 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConfig((c) => ({ ...c, hat: null }))}
+                  className={cn(
+                    "flex aspect-square items-center justify-center rounded-q-400 border text-q-body-xs-medium transition-colors",
+                    config.hat === null
+                      ? "border-q-border-focus bg-q-background-secondary"
+                      : "border-q-border-subtle hover:bg-q-background-secondary",
+                  )}
                 >
-                  Generate
-                </PromptBox.Generate>
-              </PromptBox.Root>
-            </div>
-          )}
+                  None
+                </button>
+                {AVATAR_HATS.map((h) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    aria-label={h.label}
+                    onClick={() => setConfig((c) => ({ ...c, hat: h.id }))}
+                    className={cn(
+                      "flex aspect-square items-center justify-center rounded-q-400 border text-2xl transition-colors",
+                      config.hat === h.id
+                        ? "border-q-border-focus bg-q-background-secondary"
+                        : "border-q-border-subtle hover:bg-q-background-secondary",
+                    )}
+                  >
+                    {h.emoji}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            {layer === "accessory" ? (
+              <div className="grid w-full grid-cols-6 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConfig((c) => ({ ...c, accessory: null }))}
+                  className={cn(
+                    "flex aspect-square items-center justify-center rounded-q-400 border text-q-body-xs-medium transition-colors",
+                    config.accessory === null
+                      ? "border-q-border-focus bg-q-background-secondary"
+                      : "border-q-border-subtle hover:bg-q-background-secondary",
+                  )}
+                >
+                  None
+                </button>
+                {AVATAR_ACCESSORIES.map((a) => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    aria-label={a.label}
+                    onClick={() => setConfig((c) => ({ ...c, accessory: a.id }))}
+                    className={cn(
+                      "flex aspect-square items-center justify-center rounded-q-400 border text-2xl transition-colors",
+                      config.accessory === a.id
+                        ? "border-q-border-focus bg-q-background-secondary"
+                        : "border-q-border-subtle hover:bg-q-background-secondary",
+                    )}
+                  >
+                    {a.emoji}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
+            <Button variant="primary" size="md" className="w-full" disabled={saving} onClick={save}>
+              {saving ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader variant="stars" size="sm" />
+                  <Typography as="span" variant="body-sm-medium">
+                    Saving…
+                  </Typography>
+                </span>
+              ) : (
+                "Use this avatar"
+              )}
+            </Button>
+          </div>
         </Modal.Body>
       </Modal.Content>
     </Modal.Root>
