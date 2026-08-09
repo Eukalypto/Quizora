@@ -81,6 +81,24 @@
     "kind": "top-level"
   },
   {
+    "key": "sciences-2",
+    "label": "Sciences 2",
+    "tags": [
+      "sciences-2"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "sports-2",
+    "label": "Sports 2",
+    "tags": [
+      "sports-2"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
     "key": "history__europe",
     "label": "History of Europe",
     "tags": [
@@ -461,10 +479,46 @@
     "kind": "combo"
   },
   {
+    "key": "technology",
+    "label": "Technology",
+    "tags": [
+      "technology"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "basketball",
+    "label": "Basketball",
+    "tags": [
+      "basketball"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
     "key": "television",
     "label": "Television",
     "tags": [
       "television"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "human-body",
+    "label": "Human Body",
+    "tags": [
+      "human-body"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "gymnastics",
+    "label": "Gymnastics",
+    "tags": [
+      "gymnastics"
     ],
     "matchMode": "all",
     "kind": "modifier"
@@ -488,6 +542,24 @@
     "kind": "modifier"
   },
   {
+    "key": "tennis",
+    "label": "Tennis",
+    "tags": [
+      "tennis"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "chemistry",
+    "label": "Chemistry",
+    "tags": [
+      "chemistry"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
     "key": "series",
     "label": "Series",
     "tags": [
@@ -497,10 +569,109 @@
     "kind": "modifier"
   },
   {
+    "key": "athletics",
+    "label": "Athletics",
+    "tags": [
+      "athletics"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "earth-and-climate",
+    "label": "Earth And Climate",
+    "tags": [
+      "earth-and-climate"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
     "key": "cinema",
     "label": "Cinema",
     "tags": [
       "cinema"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "physics",
+    "label": "Physics",
+    "tags": [
+      "physics"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "biology",
+    "label": "Biology",
+    "tags": [
+      "biology"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "golf",
+    "label": "Golf",
+    "tags": [
+      "golf"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "space",
+    "label": "Space",
+    "tags": [
+      "space"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "racing",
+    "label": "Racing",
+    "tags": [
+      "racing"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "geology",
+    "label": "Geology",
+    "tags": [
+      "geology"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "combat-sports",
+    "label": "Combat Sports",
+    "tags": [
+      "combat-sports"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "football",
+    "label": "Football",
+    "tags": [
+      "football"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "olympic-games",
+    "label": "Olympic Games",
+    "tags": [
+      "olympic-games"
     ],
     "matchMode": "all",
     "kind": "modifier"
