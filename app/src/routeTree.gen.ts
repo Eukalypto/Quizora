@@ -17,6 +17,7 @@ import { Route as SignUpSplatRouteImport } from './routes/sign-up.$'
 import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as ApiUserRouteImport } from './routes/api/user'
 import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar-upload'
+import { Route as AccountDeleteRouteImport } from './routes/account/delete'
 import { Route as ApiMysteryImageSplatRouteImport } from './routes/api/mystery-image.$'
 import { Route as ApiAvatarImageUserIdRouteImport } from './routes/api/avatar-image.$userId'
 import { Route as ApiAdminSyncQuestionsRouteImport } from './routes/api/admin/sync-questions'
@@ -62,6 +63,11 @@ const ApiAvatarUploadRoute = ApiAvatarUploadRouteImport.update({
   path: '/api/avatar-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountDeleteRoute = AccountDeleteRouteImport.update({
+  id: '/account/delete',
+  path: '/account/delete',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMysteryImageSplatRoute = ApiMysteryImageSplatRouteImport.update({
   id: '/api/mystery-image/$',
   path: '/api/mystery-image/$',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/delete': typeof AccountDeleteRoute
   '/api/avatar-upload': typeof ApiAvatarUploadRoute
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/delete': typeof AccountDeleteRoute
   '/api/avatar-upload': typeof ApiAvatarUploadRoute
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/delete': typeof AccountDeleteRoute
   '/api/avatar-upload': typeof ApiAvatarUploadRoute
   '/api/user': typeof ApiUserRoute
   '/sign-in/$': typeof SignInSplatRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/account/delete'
     | '/api/avatar-upload'
     | '/api/user'
     | '/sign-in/$'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/account/delete'
     | '/api/avatar-upload'
     | '/api/user'
     | '/sign-in/$'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/account/delete'
     | '/api/avatar-upload'
     | '/api/user'
     | '/sign-in/$'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AccountDeleteRoute: typeof AccountDeleteRoute
   ApiAvatarUploadRoute: typeof ApiAvatarUploadRoute
   ApiUserRoute: typeof ApiUserRoute
   SignInSplatRoute: typeof SignInSplatRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAvatarUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/delete': {
+      id: '/account/delete'
+      path: '/account/delete'
+      fullPath: '/account/delete'
+      preLoaderRoute: typeof AccountDeleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/mystery-image/$': {
       id: '/api/mystery-image/$'
       path: '/api/mystery-image/$'
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AccountDeleteRoute: AccountDeleteRoute,
   ApiAvatarUploadRoute: ApiAvatarUploadRoute,
   ApiUserRoute: ApiUserRoute,
   SignInSplatRoute: SignInSplatRoute,

@@ -1,16 +1,65 @@
 import { useEffect, useState } from "react";
-import { Award, Flame, Gamepad2, Images, LogOut, Music, Sparkles, Volume2, VolumeX, Wand2 } from "lucide-react";
+import { Award, Flame, Gamepad2, Images, LogOut, Music, ShieldCheck, ShieldOff, Sparkles, Trash2, Volume2, VolumeX, Wand2 } from "lucide-react";
 import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
+import { Modal } from "@higgsfield/quanta/modal";
 import { Progress } from "@higgsfield/quanta/progress";
+import { toast } from "@higgsfield/quanta/sonner";
 import { Typography } from "@higgsfield/quanta/typography";
 import { MetricCard, Page, PageHeader, Panel, Section } from "@/components/custom-ui";
 import { AvatarCreatorModal } from "@/components/quiz/avatar-creator-modal";
 import { logoutRedirect, type CurrentUser } from "@/hooks/use-current-user";
+import { deleteMyAccount } from "@/lib/api/account.functions";
 import { withOrigin } from "@/lib/native-shell";
 import { BADGES } from "@/lib/quiz/badges";
 import { isAudioMuted, setAudioMuted, subscribeAudioMuted } from "@/lib/quiz/sound";
 import type { UserSnapshot } from "@/lib/quiz/types";
+
+// Purchases aren't wired up yet — no ad network is integrated and no
+// App Store/Play Console products exist to charge against (see Monetization
+// v1 plan). These buttons are honest about that rather than pretending to
+// take payment; swap the onClick for real StoreKit/Play Billing calls once
+// those exist.
+function RemoveAdsSection({ active }: { active: boolean }) {
+  const comingSoon = () => toast.info("Remove Ads is coming soon", { description: "Payments aren't set up yet — check back soon." });
+
+  if (active) {
+    return (
+      <Section title="Remove Ads">
+        <Panel className="flex items-center gap-3">
+          <ShieldCheck className="size-5 text-q-icon-success" aria-hidden />
+          <Typography as="span" variant="body-sm-regular" color="secondary">
+            You're ad-free. Thanks for supporting Quizora!
+          </Typography>
+        </Panel>
+      </Section>
+    );
+  }
+
+  return (
+    <Section title="Remove Ads" description="Ads only ever show in Solo Mode — remove them for good.">
+      <Panel className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <ShieldOff className="size-5 text-q-icon-secondary" aria-hidden />
+          <Typography as="span" variant="body-sm-regular" color="secondary">
+            Go ad-free in Solo Mode
+          </Typography>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" size="xs" onClick={comingSoon}>
+            Monthly
+          </Button>
+          <Button variant="secondary" size="xs" onClick={comingSoon}>
+            Yearly
+          </Button>
+          <Button variant="primary" size="xs" onClick={comingSoon}>
+            Lifetime
+          </Button>
+        </div>
+      </Panel>
+    </Section>
+  );
+}
 
 function SettingsSection() {
   const [muted, setMuted] = useState(false);
@@ -54,6 +103,70 @@ function SettingsSection() {
             Mute
           </Button>
         </div>
+      </Panel>
+    </Section>
+  );
+}
+
+function DeleteAccountSection() {
+  const [open, setOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleConfirm = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyAccount();
+      // Account no longer exists — hard-navigate rather than client-route,
+      // so no cached query data for the deleted user can flash back in.
+      window.location.href = "/";
+    } catch {
+      toast.error("Couldn't delete your account", { description: "Check your connection and try again." });
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <Section title="Danger zone">
+      <Panel className="flex items-center justify-between gap-3">
+        <div className="flex flex-col">
+          <Typography as="span" variant="body-sm-medium" color="primary">
+            Delete account
+          </Typography>
+          <Typography as="span" variant="caption-xs-regular" color="tertiary">
+            Permanently erases your streak, XP, badges, and history. Cannot be undone.
+          </Typography>
+        </div>
+        <Modal.Root open={open} onOpenChange={setOpen}>
+          <Modal.Trigger
+            render={
+              <Button variant="dangerSoft" size="xs" start={<Trash2 className="size-4" aria-hidden />}>
+                Delete
+              </Button>
+            }
+          />
+          <Modal.Content size="sm">
+            <Modal.Header>
+              <Modal.Title>Delete your account?</Modal.Title>
+              <Modal.CloseButton />
+            </Modal.Header>
+            <Modal.Body>
+              <Typography as="p" variant="body-sm-regular" color="secondary">
+                This permanently deletes your account and all of its data — streak, XP, badges, history, and
+                avatar. This cannot be undone.
+              </Typography>
+            </Modal.Body>
+            <Modal.Footer>
+              <Modal.FooterActions>
+                <Button variant="secondary" size="sm" onClick={() => setOpen(false)} disabled={deleting}>
+                  Cancel
+                </Button>
+                <Button variant="danger" size="sm" onClick={handleConfirm} disabled={deleting}>
+                  {deleting ? "Deleting…" : "Delete my account"}
+                </Button>
+              </Modal.FooterActions>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal.Root>
       </Panel>
     </Section>
   );
@@ -186,6 +299,8 @@ export function ProfileView({
         </Panel>
       </Section>
 
+      <RemoveAdsSection active={snapshot.removeAdsActive} />
+
       <SettingsSection />
 
       <Section>
@@ -198,6 +313,8 @@ export function ProfileView({
           Sign out
         </Button>
       </Section>
+
+      <DeleteAccountSection />
     </Page>
   );
 }
