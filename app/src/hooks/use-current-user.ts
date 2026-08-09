@@ -44,7 +44,19 @@ export function useCurrentUser() {
 // instead of navigating away; the website keeps its normal full-page flow.
 export function loginRedirect(returnPath = window.location.pathname + window.location.search) {
   if (isNativeShell()) {
-    window.Clerk?.openSignIn({ routing: "virtual" });
+    // Left to infer its own post-sign-in destination, Clerk reads
+    // location/protocol info, rejects the capacitor:// scheme as invalid,
+    // and falls back to navigating to "/" (the marketing route, not the
+    // bundled /app shell) — sign-in actually succeeds, but the app then
+    // renders the signed-out marketing page's own "Sign in" CTA, which
+    // looks like sign-in silently failed. forceRedirectUrl bypasses that
+    // inference entirely.
+    // "virtual" routing depends on @clerk/ui initializing in-app, which
+    // errors here ("Clerk was not loaded with Ui components") and leaves
+    // the session established but never surfaced to useAuth()/useUser().
+    // "hash" routing (already proven working on the standalone
+    // /account/delete page's <SignIn/>) sidesteps that dependency.
+    window.Clerk?.openSignIn({ routing: "hash", forceRedirectUrl: "/app" });
     return;
   }
   window.location.href = `/sign-in?redirect_url=${encodeURIComponent(returnPath)}`;

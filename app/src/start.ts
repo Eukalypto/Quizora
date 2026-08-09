@@ -10,6 +10,26 @@ import { isNativeShell, nativeAuthHeaders, withOrigin } from "./lib/native-shell
 // the CSRF check below should ever accept.
 const NATIVE_SHELL_ORIGINS = ["capacitor://localhost", "https://localhost"];
 
+// GET requests (e.g. getSnapshot) don't reliably carry an Origin header even
+// cross-origin — only Sec-Fetch-Site. Referer still carries the full URL
+// there, so fall back to its origin rather than treating "no Origin" as "no
+// cross-origin caller" and rejecting a legitimate native-shell request.
+function getRequestOrigin(request: Request): string | null {
+  const origin = request.headers.get("Origin");
+  if (origin) return origin;
+  const referer = request.headers.get("Referer");
+  if (!referer) return null;
+  try {
+    // URL#origin is the literal string "null" for non-special schemes like
+    // capacitor: (a WHATWG spec quirk) — protocol/host still parse
+    // correctly, so reconstruct the origin from those instead.
+    const url = new URL(referer);
+    return `${url.protocol}//${url.host}`;
+  } catch {
+    return null;
+  }
+}
+
 // Server functions normally call same-origin ("/_serverFn/..."); the bundled
 // native shell has no server of its own, so its calls must be redirected to
 // the live Worker and carry a Bearer token (see native-shell.ts) instead of
@@ -28,7 +48,7 @@ const nativeAwareServerFnFetch: typeof fetch = async (input, init) => {
 // OPTIONS preflights short-circuit before Clerk/CSRF run, and so the header
 // still gets attached to error responses from later middleware.
 const corsMiddleware = createMiddleware().server(async ({ request, next }) => {
-  const origin = request.headers.get("Origin");
+  const origin = getRequestOrigin(request);
   const allowed = origin !== null && NATIVE_SHELL_ORIGINS.includes(origin);
   if (!allowed) return next();
 
@@ -74,7 +94,7 @@ const csrfMiddleware = createCsrfMiddleware({
   // known Capacitor origins; everything else still needs same-origin.
   secFetchSite: (value, ctx) => {
     if (value === "same-origin") return true;
-    const origin = ctx.request.headers.get("Origin");
+    const origin = getRequestOrigin(ctx.request);
     return origin !== null && NATIVE_SHELL_ORIGINS.includes(origin);
   },
 });
