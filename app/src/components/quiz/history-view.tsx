@@ -43,7 +43,11 @@ export function HistoryView({ history }: { history: HistoryEntry[] }) {
                       <VolumetricIconTile icon={Gamepad2} size="sm" />
                       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <Typography as="span" variant="body-sm-medium" color="primary" truncate>
-                          {entry.mode === "daily" ? "Daily challenge" : entry.categoryLabel ?? "Free play"}
+                          {entry.mode === "daily"
+                            ? "Daily challenge"
+                            : entry.mode === "weekly"
+                              ? "Weekly challenge"
+                              : (entry.categoryLabel ?? "Free play")}
                         </Typography>
                         <Typography as="span" variant="caption-sm-regular" color="tertiary">
                           {entry.correct} / {entry.total} correct
