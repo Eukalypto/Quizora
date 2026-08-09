@@ -15,9 +15,7 @@
  * media-card + generation-card after media). */
 @import "./components/composer/composer.css";
 @import "./components/media-card/media-card.css";
-@import "./components/generation-card/generation-card.css";
 @import "./components/setting-trigger/setting-trigger.css";
-@import "./components/prompt-box/prompt-box.css";
 @import "./components/icon-tile/icon-tile.css";
 
 @import "tw-animate-css";

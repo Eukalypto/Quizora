@@ -43,12 +43,4 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
-  {
-    // The justified-gallery engine deliberately reads refs during its
-    // render-time measure pass (bespoke out-of-React layout/windowing engine).
-    // Exempt from the compiler-strict refs rule — do NOT imitate this pattern
-    // in app code.
-    files: ["src/components/gallery/**"],
-    rules: { "react-hooks/refs": "off" },
-  },
 );
