@@ -52,6 +52,76 @@ interface UserRow {
   weekly_done: string | null;
   weekly_score: number;
   weekly_perfect_bonus: number;
+  challenge_tokens: number;
+  tokens_last_granted_at: string | null;
+  remove_ads_lifetime: number;
+  remove_ads_expires_at: string | null;
+}
+
+// Remove Ads entitlement (Monetization v1, "Convenience" pillar) — lifetime
+// flag OR an unexpired subscription. No ad SDK is wired in yet (see EUK for
+// ad-network integration), so this doesn't gate anything visible today; it's
+// the entitlement check future ad placements will read.
+function hasRemoveAds(row: Pick<UserRow, "remove_ads_lifetime" | "remove_ads_expires_at">): boolean {
+  if (row.remove_ads_lifetime) return true;
+  if (!row.remove_ads_expires_at) return false;
+  return new Date(`${row.remove_ads_expires_at.replace(" ", "T")}Z`).getTime() > Date.now();
+}
+
+/** Live Mode content-pack ownership (Monetization v1, "Content" pillar).
+ * The Starter pack is free for everyone and isn't stored — this only lists
+ * paid packs. Category gating in Live Mode isn't wired up yet — see
+ * PACK_CATEGORY_MAP note in category-list.ts once pack contents are decided. */
+export async function getOwnedPackKeys(db: D1Database, userId: string): Promise<string[]> {
+  const rows = await db
+    .prepare(`SELECT pack_key FROM quiz_pack_ownership WHERE user_id = ?`)
+    .bind(userId)
+    .all<{ pack_key: string }>();
+  return (rows.results ?? []).map((r) => r.pack_key);
+}
+
+// Challenge Token economy (Monetization v1, "Competition" pillar): every
+// player is topped up by TOKEN_GRANT_AMOUNT every rolling TOKEN_GRANT_INTERVAL_MS,
+// regardless of purchase history. New rows start with the column default (5)
+// and tokens_last_granted_at set at creation (see ensureUser), so the first
+// grant check below never double-grants a brand-new user.
+const TOKEN_GRANT_AMOUNT = 5;
+const TOKEN_GRANT_INTERVAL_MS = 24 * 60 * 60 * 1000;
+
+async function ensureTokenGrant(db: D1Database, userId: string): Promise<void> {
+  const row = await db
+    .prepare(`SELECT tokens_last_granted_at FROM quiz_users WHERE id = ?`)
+    .bind(userId)
+    .first<{ tokens_last_granted_at: string | null }>();
+  const last = row?.tokens_last_granted_at ?? null;
+  const due = !last || Date.now() - new Date(`${last.replace(" ", "T")}Z`).getTime() >= TOKEN_GRANT_INTERVAL_MS;
+  if (!due) return;
+  await db
+    .prepare(`UPDATE quiz_users SET challenge_tokens = challenge_tokens + ?, tokens_last_granted_at = datetime('now') WHERE id = ?`)
+    .bind(TOKEN_GRANT_AMOUNT, userId)
+    .run();
+}
+
+/** Ensures the user exists and is topped up on their free grant, then
+ * atomically spends 1 Challenge Token — Online Challenge's price per player
+ * per match (Monetization v1). Race-safe: the UPDATE's WHERE clause means a
+ * spend can never take the balance negative, so this doubles as the balance
+ * check — a `false` return means insufficient tokens, nothing was charged. */
+export async function spendChallengeToken(db: D1Database, userId: string): Promise<boolean> {
+  await ensureUser(db, userId);
+  await ensureTokenGrant(db, userId);
+  const result = await db
+    .prepare(`UPDATE quiz_users SET challenge_tokens = challenge_tokens - 1 WHERE id = ? AND challenge_tokens >= 1`)
+    .bind(userId)
+    .run();
+  return (result.meta?.changes ?? 0) > 0;
+}
+
+export async function getChallengeTokenBalance(db: D1Database, userId: string): Promise<number> {
+  await ensureUser(db, userId);
+  await ensureTokenGrant(db, userId);
+  const row = await db.prepare(`SELECT challenge_tokens FROM quiz_users WHERE id = ?`).bind(userId).first<{ challenge_tokens: number }>();
+  return row?.challenge_tokens ?? 0;
 }
 
 /** Saves the result of the in-app AI avatar creator — separate from the
@@ -62,10 +132,18 @@ export async function setAvatarUrl(db: D1Database, userId: string, avatarUrl: st
 }
 
 async function ensureUser(db: D1Database, userId: string): Promise<void> {
-  await db.prepare(`INSERT OR IGNORE INTO quiz_users (id) VALUES (?)`).bind(userId).run();
+  // tokens_last_granted_at is set here (not left null) so a brand-new row's
+  // column-default 5 tokens count as their first grant — otherwise
+  // ensureTokenGrant would see a null timestamp and immediately hand out a
+  // second 5 on top of it.
+  await db
+    .prepare(`INSERT OR IGNORE INTO quiz_users (id, tokens_last_granted_at) VALUES (?, datetime('now'))`)
+    .bind(userId)
+    .run();
 }
 
 async function loadSnapshot(db: D1Database, userId: string): Promise<UserSnapshot> {
+  await ensureTokenGrant(db, userId);
   const userRow = await db
     .prepare(`SELECT * FROM quiz_users WHERE id = ?`)
     .bind(userId)
@@ -163,6 +241,8 @@ async function loadSnapshot(db: D1Database, userId: string): Promise<UserSnapsho
     weeklyDone: userRow.weekly_done,
     weeklyScore: userRow.weekly_score,
     weeklyPerfectBonus: userRow.weekly_perfect_bonus,
+    challengeTokens: userRow.challenge_tokens,
+    removeAdsActive: hasRemoveAds(userRow),
     history,
     weeklyHistory,
     categoryPlays,
@@ -481,7 +561,7 @@ export async function submitGameResult(
         .bind(userId, input.correct, input.total, normalizedScore(input.correct, input.total), isPerfect ? 1 : 0, perfectBonus),
     );
   } else if (input.mode === "weekly") {
-    const weeklyScore = input.correct * 10 + perfectBonus;
+    const weeklyScore = input.correct * 10 + (input.timeBonusTotal ?? 0) + perfectBonus;
     statements.push(
       db
         .prepare(
@@ -495,6 +575,16 @@ export async function submitGameResult(
           `INSERT INTO quiz_weekly_history (user_id, week, score, perfect, perfect_bonus) VALUES (?, ?, ?, ?, ?)`,
         )
         .bind(userId, thisWeek, weeklyScore, isPerfect ? 1 : 0, perfectBonus),
+    );
+    // Weekly runs also count toward the unified History log (games_played
+    // already includes them — see HistoryView's "every game you've played").
+    statements.push(
+      db
+        .prepare(
+          `INSERT INTO quiz_history (user_id, mode, category_label, correct, total, score, perfect, perfect_bonus)
+           VALUES (?, 'weekly', NULL, ?, ?, ?, ?, ?)`,
+        )
+        .bind(userId, input.correct, input.total, weeklyScore, isPerfect ? 1 : 0, perfectBonus),
     );
   } else {
     const points = input.correct * 10 + (input.timeBonusTotal ?? 0);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Copy, Share2, Swords, Trophy } from "lucide-react";
+import { Coins, Copy, Share2, Swords, Trophy } from "lucide-react";
 import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
 import { Loader } from "@higgsfield/quanta/loader";
@@ -83,7 +83,15 @@ type Phase =
   | "waiting"
   | "results";
 
-export function ChallengeView({ challengeId, onExit }: { challengeId?: string; onExit: () => void }) {
+export function ChallengeView({
+  challengeId,
+  tokenBalance,
+  onExit,
+}: {
+  challengeId?: string;
+  tokenBalance: number;
+  onExit: () => void;
+}) {
   const queryClient = useQueryClient();
   const [activeId, setActiveId] = useState<string | null>(challengeId ?? null);
   const [selectedCategoryKey, setSelectedCategoryKey] = useState<string | null>(null);
@@ -104,6 +112,11 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
   const data = stateQuery.data as ChallengeStateResult | undefined;
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["challenge", activeId] });
+  // Creating/joining spends a Challenge Token server-side — the displayed
+  // balance comes from the shared snapshot query, so it needs invalidating
+  // too or it'll keep showing the pre-spend number until something else
+  // (e.g. finishing a game elsewhere) happens to refresh it.
+  const refreshTokenBalance = () => queryClient.invalidateQueries({ queryKey: ["quiz-snapshot"] });
 
   const startAsCreator = async () => {
     if (!selectedCategoryKey) return;
@@ -111,7 +124,11 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
     try {
       const result = await createChallengeFn({ data: { categoryKey: selectedCategoryKey } });
       if (!result.ok) {
-        toast.error("Couldn't create that challenge.");
+        toast.error(
+          result.error === "insufficient_tokens"
+            ? "You're out of Challenge Tokens — come back after your next free top-up, or earn more."
+            : "Couldn't create that challenge.",
+        );
         return;
       }
       setActiveId(result.id);
@@ -119,6 +136,7 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
       setPlayingRound(1);
       setIsCreatorLocal(true);
       setPhase("playing");
+      refreshTokenBalance();
     } catch {
       toast.error("Couldn't start your round", { description: "Try again in a moment." });
     } finally {
@@ -138,6 +156,7 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
           already_full: "This challenge already has two players.",
           own_challenge: "You can't join your own challenge.",
           already_played: "You've already played this round.",
+          insufficient_tokens: "You're out of Challenge Tokens — come back after your next free top-up, or earn more.",
         };
         toast.error(messages[result.error] ?? "Couldn't join that challenge.");
         return;
@@ -146,6 +165,7 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
       setPlayingRound(1);
       setIsCreatorLocal(false);
       setPhase("playing");
+      refreshTokenBalance();
     } catch {
       toast.error("Couldn't join that challenge", { description: "Try again in a moment." });
     } finally {
@@ -290,8 +310,14 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
               <Typography as="p" variant="body-sm-regular" color="secondary" className="max-w-xs">
                 Play their round first — then you'll pick a category and set up round 2 for them.
               </Typography>
-              <Button variant="primary" size="md" disabled={starting} onClick={joinAsOpponent}>
-                {starting ? "Loading…" : "Play round 1"}
+              <div className="flex items-center gap-1.5 rounded-q-full border border-q-border-subtle px-3 py-1.5">
+                <Coins className="size-4 text-q-icon-warning" aria-hidden />
+                <Typography as="span" variant="label-sm-semi-bold" color="primary">
+                  {tokenBalance} Challenge Token{tokenBalance === 1 ? "" : "s"}
+                </Typography>
+              </div>
+              <Button variant="primary" size="md" disabled={starting || tokenBalance <= 0} onClick={joinAsOpponent}>
+                {starting ? "Loading…" : tokenBalance <= 0 ? "No Challenge Tokens left" : "Play round 1"}
               </Button>
             </Panel>
           </Section>
@@ -304,17 +330,26 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
       );
     }
     // Creating a brand-new challenge.
+    const noTokens = tokenBalance <= 0;
     return (
       <Page>
         <PageHeader
           eyebrow="Challenge"
           title="Challenge a friend"
           description="Pick a category and play 10 questions — your friend plays your round, then sets up their own for you."
+          actions={
+            <div className="flex items-center gap-1.5 rounded-q-full border border-q-border-subtle px-3 py-1.5">
+              <Coins className="size-4 text-q-icon-warning" aria-hidden />
+              <Typography as="span" variant="label-sm-semi-bold" color="primary">
+                {tokenBalance}
+              </Typography>
+            </div>
+          }
         />
         <Section>
           <div className="flex justify-end">
-            <Button variant="primary" size="md" disabled={!selectedCategoryKey || starting} onClick={startAsCreator}>
-              {starting ? "Starting…" : "Start round 1"}
+            <Button variant="primary" size="md" disabled={!selectedCategoryKey || starting || noTokens} onClick={startAsCreator}>
+              {starting ? "Starting…" : noTokens ? "No Challenge Tokens left" : "Start round 1"}
             </Button>
           </div>
           <CategoryPicker
@@ -328,8 +363,8 @@ export function ChallengeView({ challengeId, onExit }: { challengeId?: string; o
             <Button variant="ghost" size="sm" onClick={onExit}>
               Back
             </Button>
-            <Button variant="primary" size="md" disabled={!selectedCategoryKey || starting} onClick={startAsCreator}>
-              {starting ? "Starting…" : "Start round 1"}
+            <Button variant="primary" size="md" disabled={!selectedCategoryKey || starting || noTokens} onClick={startAsCreator}>
+              {starting ? "Starting…" : noTokens ? "No Challenge Tokens left" : "Start round 1"}
             </Button>
           </div>
         </Section>

@@ -3,6 +3,7 @@ import type { AuthenticatedUser } from "@/lib/auth.server";
 import { ALL_CATEGORIES } from "@/lib/category-list";
 import type { Question } from "@/lib/categories";
 import { getQuestionBank } from "@/lib/question-bank";
+import { spendChallengeToken } from "./db.server";
 import { buildChallengeRoundQuestions, CHALLENGE_INVITE_TTL_HOURS, generateChallengeId } from "./challenge";
 
 interface ChallengeRow {
@@ -64,9 +65,13 @@ export async function createChallengeAndStartRound1(
   db: D1Database,
   user: AuthenticatedUser,
   categoryKey: string,
-): Promise<{ ok: true; id: string; questions: Question[] } | { ok: false; error: "unknown_category" }> {
+): Promise<{ ok: true; id: string; questions: Question[] } | { ok: false; error: "unknown_category" | "insufficient_tokens" }> {
   const tags = tagsForCategoryKey(categoryKey);
   if (!tags) return { ok: false, error: "unknown_category" };
+
+  // Online Challenge costs 1 Challenge Token per player (Monetization v1) —
+  // the creator pays theirs here, up front; the opponent pays on first join.
+  if (!(await spendChallengeToken(db, user.id))) return { ok: false, error: "insufficient_tokens" };
 
   const questions = await buildChallengeRoundQuestions(tags);
   const id = generateChallengeId();
@@ -81,7 +86,7 @@ export async function createChallengeAndStartRound1(
   return { ok: true, id, questions };
 }
 
-export type JoinChallengeError = "not_found" | "expired" | "already_full" | "own_challenge" | "already_played";
+export type JoinChallengeError = "not_found" | "expired" | "already_full" | "own_challenge" | "already_played" | "insufficient_tokens";
 
 /** Opponent joins and immediately plays Round 1 — the fixed set the creator
  * already played, no category choice here (that only happens for Round 2). */
@@ -98,6 +103,10 @@ export async function joinChallengeAndPlayRound1(
   if (isExpired(row)) return { ok: false, error: "expired" };
 
   if (!row.opponent_user_id) {
+    // First join only — the opponent's half of "1 Challenge Token per
+    // player" (Monetization v1). Charged before claiming the slot, so a
+    // failed spend leaves the challenge open for them to retry once topped up.
+    if (!(await spendChallengeToken(db, user.id))) return { ok: false, error: "insufficient_tokens" };
     await db
       .prepare(`UPDATE quiz_challenges SET opponent_user_id = ?, opponent_name = ?, opponent_platform_avatar = ? WHERE id = ? AND opponent_user_id IS NULL`)
       .bind(user.id, user.name ?? null, user.avatar_url ?? null, id)

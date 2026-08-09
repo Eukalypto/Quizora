@@ -243,7 +243,7 @@ function QuizoraApp({ challengeId }: { challengeId?: string }) {
   } else if (view === "mystery-gallery") {
     content = <MysteryGalleryView />;
   } else if (view === "challenge") {
-    content = <ChallengeView challengeId={selectedChallengeId} onExit={() => setView("home")} />;
+    content = <ChallengeView challengeId={selectedChallengeId} tokenBalance={snapshot?.challengeTokens ?? 0} onExit={() => setView("home")} />;
   } else if (view === "challenge-inbox") {
     content = (
       <ChallengeInboxView

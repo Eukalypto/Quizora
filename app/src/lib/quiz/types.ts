@@ -33,6 +33,8 @@ export interface UserSnapshot {
   weeklyDone: string | null;
   weeklyScore: number;
   weeklyPerfectBonus: number;
+  challengeTokens: number;
+  removeAdsActive: boolean;
   history: HistoryEntry[];
   weeklyHistory: WeeklyHistoryEntry[];
   categoryPlays: Record<string, number>;
