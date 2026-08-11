@@ -14,7 +14,7 @@ export const LIVE_ORIGIN = "https://quizora.quizora.workers.dev";
 
 declare global {
   interface Window {
-    Capacitor?: { isNativePlatform: () => boolean };
+    Capacitor?: { isNativePlatform: () => boolean; getPlatform: () => string };
     Clerk?: {
       session?: { getToken: () => Promise<string | null> } | null;
       signOut: (opts?: { redirectUrl?: string }) => Promise<void>;

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Award, Flame, Gamepad2, Images, LogOut, Music, ShieldCheck, ShieldOff, Sparkles, Trash2, Volume2, VolumeX, Wand2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Award, Flame, Gamepad2, Images, LogOut, Music, RotateCcw, ShieldCheck, ShieldOff, Sparkles, Trash2, Volume2, VolumeX, Wand2 } from "lucide-react";
+import type { PurchasesPackage } from "@revenuecat/purchases-capacitor";
 import { Avatar } from "@higgsfield/quanta/avatar";
 import { Button } from "@higgsfield/quanta/button";
 import { Modal } from "@higgsfield/quanta/modal";
@@ -10,18 +12,145 @@ import { MetricCard, Page, PageHeader, Panel, Section } from "@/components/custo
 import { AvatarCreatorModal } from "@/components/quiz/avatar-creator-modal";
 import { logoutRedirect, type CurrentUser } from "@/hooks/use-current-user";
 import { deleteMyAccount } from "@/lib/api/account.functions";
-import { withOrigin } from "@/lib/native-shell";
+import { syncMyEntitlements } from "@/lib/api/purchases.functions";
+import { isNativeShell, withOrigin } from "@/lib/native-shell";
+import { useRevenueCatReady } from "@/lib/purchases-native";
 import { BADGES } from "@/lib/quiz/badges";
 import { isAudioMuted, setAudioMuted, subscribeAudioMuted } from "@/lib/quiz/sound";
 import type { UserSnapshot } from "@/lib/quiz/types";
 
-// Purchases aren't wired up yet — no ad network is integrated and no
-// App Store/Play Console products exist to charge against (see Monetization
-// v1 plan). These buttons are honest about that rather than pretending to
-// take payment; swap the onClick for real StoreKit/Play Billing calls once
-// those exist.
+// Remove Ads purchase flow — native shell only (StoreKit/Play Billing don't
+// exist on web, and there's no web purchase path per the agreed
+// Monetization v1 plan, no Stripe). `isNative` defaults to false and only
+// flips true inside an effect (never during the initial render) so the
+// prerendered mobile-shell HTML — built on Node, which has no
+// window.Capacitor — always matches the first client render; flipping it
+// synchronously would cause a hydration mismatch the one time this actually
+// runs inside the real native app.
 function RemoveAdsSection({ active }: { active: boolean }) {
-  const comingSoon = () => toast.info("Remove Ads is coming soon", { description: "Payments aren't set up yet — check back soon." });
+  const [isNative, setIsNative] = useState(false);
+  useEffect(() => {
+    setIsNative(isNativeShell());
+  }, []);
+
+  if (!isNative) {
+    const comingSoon = () => toast.info("Remove Ads is coming soon", { description: "Payments aren't set up yet — check back soon." });
+    if (active) {
+      return (
+        <Section title="Remove Ads">
+          <Panel className="flex items-center gap-3">
+            <ShieldCheck className="size-5 text-q-icon-success" aria-hidden />
+            <Typography as="span" variant="body-sm-regular" color="secondary">
+              You're ad-free. Thanks for supporting Quizora!
+            </Typography>
+          </Panel>
+        </Section>
+      );
+    }
+    return (
+      <Section title="Remove Ads" description="Ads only ever show in Solo Mode — remove them for good.">
+        <Panel className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <ShieldOff className="size-5 text-q-icon-secondary" aria-hidden />
+            <Typography as="span" variant="body-sm-regular" color="secondary">
+              Go ad-free in Solo Mode
+            </Typography>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" size="xs" onClick={comingSoon}>
+              Monthly
+            </Button>
+            <Button variant="secondary" size="xs" onClick={comingSoon}>
+              Yearly
+            </Button>
+            <Button variant="primary" size="xs" onClick={comingSoon}>
+              Lifetime
+            </Button>
+          </div>
+        </Panel>
+      </Section>
+    );
+  }
+
+  return <RemoveAdsSectionNative active={active} />;
+}
+
+function RemoveAdsSectionNative({ active }: { active: boolean }) {
+  const queryClient = useQueryClient();
+  const ready = useRevenueCatReady();
+  const [packages, setPackages] = useState<{ monthly: PurchasesPackage | null; annual: PurchasesPackage | null; lifetime: PurchasesPackage | null } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!ready || active) return;
+    let cancelled = false;
+    void (async () => {
+      const { Purchases } = await import("@revenuecat/purchases-capacitor");
+      const offerings = await Purchases.getOfferings().catch(() => null);
+      const current = offerings?.current;
+      if (!cancelled && current) {
+        setPackages({ monthly: current.monthly, annual: current.annual, lifetime: current.lifetime });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, active]);
+
+  const refreshSnapshot = () => queryClient.invalidateQueries({ queryKey: ["quiz-snapshot"] });
+
+  // The local optimistic flip (from the SDK's own fresh CustomerInfo) is
+  // what makes the UI feel instant; syncMyEntitlements is what makes it
+  // durable — it's the D1 write that survives a reload, and (for restores
+  // specifically) the only path guaranteed to run at all, since a restore
+  // doesn't always produce a new RevenueCat webhook event.
+  const syncAfterLocalSuccess = async () => {
+    try {
+      await syncMyEntitlements();
+    } catch {
+      // D1 sync failed (e.g. RevenueCat secrets not configured on the Worker
+      // yet) — the purchase itself still succeeded and the webhook will
+      // eventually reconcile it; don't block or scare the user over this.
+    }
+    refreshSnapshot();
+  };
+
+  const handlePurchase = async (pkg: PurchasesPackage | null) => {
+    if (!pkg || busy) return;
+    setBusy(true);
+    try {
+      const { Purchases } = await import("@revenuecat/purchases-capacitor");
+      await Purchases.purchasePackage({ aPackage: pkg });
+      toast.success("You're ad-free!", { description: "Thanks for supporting Quizora." });
+      await syncAfterLocalSuccess();
+    } catch (error) {
+      const userCancelled = (error as { userCancelled?: boolean } | null)?.userCancelled;
+      if (!userCancelled) {
+        toast.error("Purchase didn't go through", { description: "Check your connection and try again." });
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const { Purchases } = await import("@revenuecat/purchases-capacitor");
+      const { customerInfo } = await Purchases.restorePurchases();
+      await syncAfterLocalSuccess();
+      if (customerInfo.entitlements.active["remove_ads"]) {
+        toast.success("Purchases restored");
+      } else {
+        toast.info("Nothing to restore", { description: "No previous Remove Ads purchase found on this account." });
+      }
+    } catch {
+      toast.error("Couldn't restore purchases", { description: "Check your connection and try again." });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   if (active) {
     return (
@@ -46,16 +175,19 @@ function RemoveAdsSection({ active }: { active: boolean }) {
           </Typography>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button variant="secondary" size="xs" onClick={comingSoon}>
+          <Button variant="secondary" size="xs" disabled={!ready || busy || !packages?.monthly} onClick={() => void handlePurchase(packages?.monthly ?? null)}>
             Monthly
           </Button>
-          <Button variant="secondary" size="xs" onClick={comingSoon}>
+          <Button variant="secondary" size="xs" disabled={!ready || busy || !packages?.annual} onClick={() => void handlePurchase(packages?.annual ?? null)}>
             Yearly
           </Button>
-          <Button variant="primary" size="xs" onClick={comingSoon}>
+          <Button variant="primary" size="xs" disabled={!ready || busy || !packages?.lifetime} onClick={() => void handlePurchase(packages?.lifetime ?? null)}>
             Lifetime
           </Button>
         </div>
+        <Button variant="tertiary" size="xs" disabled={!ready || busy} onClick={() => void handleRestore()} start={<RotateCcw className="size-3.5" aria-hidden />}>
+          Restore Purchases
+        </Button>
       </Panel>
     </Section>
   );

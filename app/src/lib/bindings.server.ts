@@ -48,6 +48,13 @@ type AppEnv = {
   // Shared secret gating the manual question-bank sync trigger — see
   // src/routes/api/admin/sync-questions.ts. Set via `wrangler secret put`.
   QUESTION_SYNC_TOKEN?: string;
+  // Expected "Authorization" header value on inbound RevenueCat webhooks —
+  // see src/routes/api/webhooks/revenuecat.ts. Set via `wrangler secret put`.
+  REVENUECAT_WEBHOOK_SECRET?: string;
+  // RevenueCat's server-side secret API key — can read/mutate any subscriber
+  // in the project, never expose to the client. Used by
+  // src/lib/quiz/entitlements.server.ts. Set via `wrangler secret put`.
+  REVENUECAT_SECRET_API_KEY?: string;
 };
 
 export function bindings(): AppEnv {

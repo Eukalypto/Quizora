@@ -14,6 +14,7 @@ const SOLE_OWNER_TABLES = [
   "quiz_result_cards",
   "quiz_mystery_daily",
   "quiz_mystery_seen",
+  "quiz_entitlements",
 ] as const;
 
 export async function deleteUserAccountData(db: D1Database, storage: R2Bucket | undefined, userId: string): Promise<void> {

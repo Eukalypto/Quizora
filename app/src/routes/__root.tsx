@@ -16,6 +16,7 @@ import { Toaster } from "@higgsfield/quanta/sonner";
 
 import appCss from "../styles.css?url";
 import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
+import { useRevenueCatIdentity } from "../lib/purchases-native";
 // Page metadata (browser <title>/favicon + social og: tags) committed into the
 // repo by the marketplace meta API and read at BUILD time — no runtime fetch.
 // Editing it via the app settings UI rewrites this file and redeploys the app.
@@ -186,6 +187,8 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useRevenueCatIdentity();
 
   useEffect(() => {
     if (!__HF_DESIGN_INSPECTOR__) {

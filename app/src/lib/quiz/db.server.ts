@@ -3,6 +3,7 @@ import { getQuestionBank } from "@/lib/question-bank";
 import type { Difficulty, Question } from "@/lib/categories";
 import { levelToDifficulty } from "@/lib/categories";
 import { evaluateBadges } from "./badges";
+import { getActiveEntitlementIds } from "./entitlements.server";
 import { getMysteryPoolQuestion, pickSharedMysteryQuestion, type MysteryPoolQuestion } from "./mystery-pool.server";
 import { pickWeighted } from "./ratio-sampling";
 import { getLevel, getXpInLevel, nextStreak, normalizedScore, todayIso, isoWeek, xpForGame } from "./scoring";
@@ -54,18 +55,10 @@ interface UserRow {
   weekly_perfect_bonus: number;
   challenge_tokens: number;
   tokens_last_granted_at: string | null;
-  remove_ads_lifetime: number;
-  remove_ads_expires_at: string | null;
-}
-
-// Remove Ads entitlement (Monetization v1, "Convenience" pillar) — lifetime
-// flag OR an unexpired subscription. No ad SDK is wired in yet (see EUK for
-// ad-network integration), so this doesn't gate anything visible today; it's
-// the entitlement check future ad placements will read.
-function hasRemoveAds(row: Pick<UserRow, "remove_ads_lifetime" | "remove_ads_expires_at">): boolean {
-  if (row.remove_ads_lifetime) return true;
-  if (!row.remove_ads_expires_at) return false;
-  return new Date(`${row.remove_ads_expires_at.replace(" ", "T")}Z`).getTime() > Date.now();
+  // remove_ads_lifetime/remove_ads_expires_at columns still exist in the DB
+  // (0014, additive-only migrations) but were never populated by any real
+  // code path and are no longer read — entitlement state now lives in
+  // quiz_entitlements, synced from RevenueCat (see entitlements.server.ts).
 }
 
 /** Live Mode content-pack ownership (Monetization v1, "Content" pillar).
@@ -131,7 +124,7 @@ export async function setAvatarUrl(db: D1Database, userId: string, avatarUrl: st
   await db.prepare(`UPDATE quiz_users SET avatar_url = ?, updated_at = datetime('now') WHERE id = ?`).bind(avatarUrl, userId).run();
 }
 
-async function ensureUser(db: D1Database, userId: string): Promise<void> {
+export async function ensureUser(db: D1Database, userId: string): Promise<void> {
   // tokens_last_granted_at is set here (not left null) so a brand-new row's
   // column-default 5 tokens count as their first grant — otherwise
   // ensureTokenGrant would see a null timestamp and immediately hand out a
@@ -219,6 +212,8 @@ async function loadSnapshot(db: D1Database, userId: string): Promise<UserSnapsho
 
   const seenBadgeIds = (badgeRows.results ?? []).map((r) => r.badge_id);
 
+  const entitlements = await getActiveEntitlementIds(db, userId);
+
   const unlockedBadgeIds = evaluateBadges({
     xp: userRow.xp,
     streak: userRow.streak,
@@ -242,7 +237,7 @@ async function loadSnapshot(db: D1Database, userId: string): Promise<UserSnapsho
     weeklyScore: userRow.weekly_score,
     weeklyPerfectBonus: userRow.weekly_perfect_bonus,
     challengeTokens: userRow.challenge_tokens,
-    removeAdsActive: hasRemoveAds(userRow),
+    removeAdsActive: entitlements.has("remove_ads"),
     history,
     weeklyHistory,
     categoryPlays,

@@ -18,6 +18,7 @@ import { Route as SignInSplatRouteImport } from './routes/sign-in.$'
 import { Route as ApiUserRouteImport } from './routes/api/user'
 import { Route as ApiAvatarUploadRouteImport } from './routes/api/avatar-upload'
 import { Route as AccountDeleteRouteImport } from './routes/account/delete'
+import { Route as ApiWebhooksRevenuecatRouteImport } from './routes/api/webhooks/revenuecat'
 import { Route as ApiMysteryImageSplatRouteImport } from './routes/api/mystery-image.$'
 import { Route as ApiAvatarImageUserIdRouteImport } from './routes/api/avatar-image.$userId'
 import { Route as ApiAdminSyncQuestionsRouteImport } from './routes/api/admin/sync-questions'
@@ -68,6 +69,11 @@ const AccountDeleteRoute = AccountDeleteRouteImport.update({
   path: '/account/delete',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksRevenuecatRoute = ApiWebhooksRevenuecatRouteImport.update({
+  id: '/api/webhooks/revenuecat',
+  path: '/api/webhooks/revenuecat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMysteryImageSplatRoute = ApiMysteryImageSplatRouteImport.update({
   id: '/api/mystery-image/$',
   path: '/api/mystery-image/$',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
   '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
   '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
+  '/api/webhooks/revenuecat': typeof ApiWebhooksRevenuecatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
   '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
   '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
+  '/api/webhooks/revenuecat': typeof ApiWebhooksRevenuecatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/api/admin/sync-questions': typeof ApiAdminSyncQuestionsRoute
   '/api/avatar-image/$userId': typeof ApiAvatarImageUserIdRoute
   '/api/mystery-image/$': typeof ApiMysteryImageSplatRoute
+  '/api/webhooks/revenuecat': typeof ApiWebhooksRevenuecatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/api/admin/sync-questions'
     | '/api/avatar-image/$userId'
     | '/api/mystery-image/$'
+    | '/api/webhooks/revenuecat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/api/admin/sync-questions'
     | '/api/avatar-image/$userId'
     | '/api/mystery-image/$'
+    | '/api/webhooks/revenuecat'
   id:
     | '__root__'
     | '/'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/api/admin/sync-questions'
     | '/api/avatar-image/$userId'
     | '/api/mystery-image/$'
+    | '/api/webhooks/revenuecat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -198,6 +210,7 @@ export interface RootRouteChildren {
   ApiAdminSyncQuestionsRoute: typeof ApiAdminSyncQuestionsRoute
   ApiAvatarImageUserIdRoute: typeof ApiAvatarImageUserIdRoute
   ApiMysteryImageSplatRoute: typeof ApiMysteryImageSplatRoute
+  ApiWebhooksRevenuecatRoute: typeof ApiWebhooksRevenuecatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountDeleteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/revenuecat': {
+      id: '/api/webhooks/revenuecat'
+      path: '/api/webhooks/revenuecat'
+      fullPath: '/api/webhooks/revenuecat'
+      preLoaderRoute: typeof ApiWebhooksRevenuecatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/mystery-image/$': {
       id: '/api/mystery-image/$'
       path: '/api/mystery-image/$'
@@ -310,6 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminSyncQuestionsRoute: ApiAdminSyncQuestionsRoute,
   ApiAvatarImageUserIdRoute: ApiAvatarImageUserIdRoute,
   ApiMysteryImageSplatRoute: ApiMysteryImageSplatRoute,
+  ApiWebhooksRevenuecatRoute: ApiWebhooksRevenuecatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
