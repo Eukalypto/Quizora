@@ -4,7 +4,7 @@ import type { HistoryEntry, WeeklyHistoryEntry } from "./types";
 // Imported directly from the JSON (not question-bank.ts) so client code that
 // only needs the tiny taxonomy doesn't drag the ~11k-question bank into the
 // browser bundle — see src/lib/category-list.ts for the same pattern.
-const TAXONOMY = taxonomyJson as { topLevel: string[]; continents: string[]; centuries: string[] };
+const TAXONOMY = taxonomyJson as { topLevel: string[]; domains: string[] };
 
 export interface BadgeContext {
   xp: number;

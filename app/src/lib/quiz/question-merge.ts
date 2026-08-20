@@ -1,25 +1,37 @@
 // Isomorphic core of the question-bank merge pipeline — pure data in, data
 // out, no filesystem access. Shared by scripts/merge-drive-questions.mjs
 // (local dev, reads/writes local files) and the Worker's daily Cron sync
-// (reads/writes R2 objects). Keep in sync with the Drive index's naming
-// conventions — see the comment block in merge-drive-questions.mjs for the
-// full "why filename, not internal fields" rationale.
+// (reads/writes R2 objects). Subject identity, hierarchy, and question tags
+// all come from the Drive index (parseSubjectIndex below), matched against
+// each file's own internal group/subgroup fields — not from a filename-keyed
+// lookup — so adding a new Subject is purely a spreadsheet edit.
 
-import { deriveCategories, type Category, type Question } from "@/lib/categories";
+import type { Category, Question } from "@/lib/categories";
+
+export type SubjectTier = "top-level" | "combo" | "modifier";
 
 export interface Taxonomy {
+  /** Fixed set of 11 legacy tags — badges.ts/categoryPlays crediting stays
+   * scoped to these regardless of how many real Subjects exist now. Never
+   * grows; see LEGACY_TAG_BY_SUBJECT_NAME for how questions still get
+   * tagged with these from the index-driven data below. */
   topLevel: string[];
-  continents: string[];
-  centuries: string[];
+  /** Tag for every *combined* Subject (hierarchy-1 Domains and the
+   * hierarchy-2 continent/catch-all Categories) — what session.ts's
+   * round-robin draws across, so Daily/Weekly touch all real content
+   * instead of only the 11 legacy tags. */
+  domains: string[];
 }
 
 export interface RatioComponent {
-  tags: [string, string];
+  tags: [string];
   ratio: number;
 }
 
 export interface MergeInputFile {
-  /** Filename without the .json extension, e.g. "Africa History". */
+  /** Filename without the .json extension, e.g. "Africa History". Used only
+   * for error/report messages — Subject matching reads each file's own
+   * internal group/subgroup fields, never the filename. */
   name: string;
   content: string;
 }
@@ -31,189 +43,162 @@ export interface MergeResult {
   combinedCategories: Record<string, RatioComponent[]>;
   perFileCounts: Record<string, number>;
   failures: string[];
-  skippedRatioBlocks: string[];
+  /** Files whose internal group/subgroup didn't match any index row — their
+   * questions are dropped, never blocking the rest of the merge. */
+  unmatchedFiles: string[];
+  /** Index rows with no matching file — simply not shown to players; this
+   * is an expected human/logistics gap, not an error. */
+  indexOnlySubjects: string[];
   ratioTotalMismatches: string[];
 }
 
-function slugify(label: string): string {
+export function slugify(label: string): string {
   return label.trim().toLowerCase().replace(/\s+/g, "-");
 }
 
-// Drive-side combined-category blocks where the Group column (not Subgroup)
-// is the constant axis — see parseCombinedCategoryRatios below.
-const GROUP_CONSTANT_COMBOS: Record<string, string> = {
+function normalizeKey(s: string): string {
+  return s.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+function pairKeyOf(groups: string, subgroups: string): string {
+  return `${normalizeKey(groups)} ${normalizeKey(subgroups)}`;
+}
+
+// A question that's a component of one of these 11 legacy Subjects also
+// gets the matching pre-rework tag added to `subcategories`, in addition to
+// its real cat-* tags, purely so badges.ts's `categoryPlays["sciences"]`
+// and `TAXONOMY.topLevel.every(...)` keep working unmodified — see the
+// plan's "badges stay scoped to the old 11 tags" decision. Matched against
+// the index's own Subject name (column B), taken verbatim.
+const LEGACY_TAG_BY_SUBJECT_NAME: Record<string, string> = {
+  History: "history",
+  Geography: "geography",
+  Traditions: "traditions",
+  Arts: "arts",
+  Literature: "literature",
+  "Sciences 1": "sciences",
+  "Sports 1": "sports",
+  Music: "music",
+  "Screen Arts": "screens",
   "Sciences 2": "sciences-2",
   "Sports 2": "sports-2",
 };
+export const LEGACY_TOP_LEVEL_TAGS = Object.values(LEGACY_TAG_BY_SUBJECT_NAME);
 
-function parseCombinedCategoryRatios(
-  csvText: string,
-  topLevelTags: string[],
-  continentTags: string[],
-): { combined: Record<string, RatioComponent[]>; skipped: string[]; totalMismatches: string[] } {
-  const lines = csvText.split("\n").map((l) => l.trimEnd()).filter((l) => l.length > 0);
-  const rows = lines.slice(1).map((line) => {
-    const [, category, hierarchy, groups, subgroups, ratio] = line.split(";");
-    return {
-      category: (category ?? "").trim(),
-      hierarchy: (hierarchy ?? "").trim(),
-      groups: (groups ?? "").trim(),
-      subgroups: (subgroups ?? "").trim(),
-      ratio: (ratio ?? "").trim(),
-    };
-  });
-
-  const blocks: { name: string; hierarchy: string; components: { groups: string; subgroups: string; ratio: string }[] }[] = [];
-  let current: (typeof blocks)[number] | null = null;
-  for (const row of rows) {
-    if (row.category !== "") {
-      current = { name: row.category, hierarchy: row.hierarchy, components: [] };
-      blocks.push(current);
-    }
-    if (!current) continue;
-    if (row.ratio === "") continue;
-    current.components.push({ groups: row.groups, subgroups: row.subgroups, ratio: row.ratio });
-  }
-
-  const combined: Record<string, RatioComponent[]> = {};
-  const skipped: string[] = [];
-  const totalMismatches: string[] = [];
-
-  for (const block of blocks.filter((b) => b.hierarchy === "1" && b.components.length > 0)) {
-    const subgroupsSet = new Set(block.components.map((c) => c.subgroups));
-    const isTopicConstant = subgroupsSet.size === 1;
-    const explicitTopTag = GROUP_CONSTANT_COMBOS[block.name];
-
-    let topTag: string;
-    let components: RatioComponent[];
-    if (isTopicConstant) {
-      topTag = slugify([...subgroupsSet][0]);
-      if (!topLevelTags.includes(topTag)) {
-        skipped.push(`${block.name} (unknown top-level tag "${topTag}")`);
-        continue;
-      }
-      components = block.components.map((c) => ({
-        tags: [topTag, slugify(c.groups)] as [string, string],
-        ratio: Number(c.ratio.replace(",", ".")),
-      }));
-      const unknownContinent = components.find((c) => !continentTags.includes(c.tags[1]));
-      if (unknownContinent) {
-        skipped.push(`${block.name} (unknown continent tag "${unknownContinent.tags[1]}")`);
-        continue;
-      }
-    } else if (explicitTopTag) {
-      topTag = explicitTopTag;
-      components = block.components.map((c) => ({
-        tags: [topTag, slugify(c.subgroups)] as [string, string],
-        ratio: Number(c.ratio.replace(",", ".")),
-      }));
-    } else {
-      skipped.push(block.name);
-      continue;
-    }
-
-    const total = components.reduce((sum, c) => sum + c.ratio, 0);
-    if (Math.abs(total - 10) > 1e-9) {
-      totalMismatches.push(`${block.name}: ratios sum to ${total}, expected 10`);
-    }
-    combined[topTag] = components;
-  }
-
-  return { combined, skipped, totalMismatches };
+function hierarchyToKind(hierarchy: number): SubjectTier {
+  if (hierarchy === 1) return "top-level";
+  if (hierarchy === 2) return "combo";
+  return "modifier";
 }
 
-// filename (without .json) -> tags. See merge-drive-questions.mjs's original
-// comment for the full rationale — filenames are the only consistent tagging
-// signal across the Drive-sourced files.
-export const TAG_MAP: Record<string, [string, string]> = {
-  "Africa Geography": ["geography", "africa"],
-  "Africa History": ["history", "africa"],
-  "Africa Literature": ["literature", "africa"],
-  "Africa Science": ["sciences", "africa"],
-  "Africa Traditions": ["traditions", "africa"],
-  "Asia Art": ["arts", "asia"],
-  "Asia Geography": ["geography", "asia"],
-  "Asia History": ["history", "asia"],
-  "Asia Literature": ["literature", "asia"],
-  "Asia Science": ["sciences", "asia"],
-  "Asia Sports": ["sports", "asia"],
-  "Asia Traditions": ["traditions", "asia"],
-  "Europe Arts": ["arts", "europe"],
-  "Europe Geography": ["geography", "europe"],
-  "Europe History": ["history", "europe"],
-  "Europe Literature": ["literature", "europe"],
-  "Europe Science": ["sciences", "europe"],
-  "Europe Sports": ["sports", "europe"],
-  "Europe Traditions": ["traditions", "europe"],
-  "Music Classical": ["music", "classical-music"],
-  "Music Rock": ["music", "rock"],
-  "NorthAmerica Arts": ["arts", "north-america"],
-  "NorthAmerica Geography": ["geography", "north-america"],
-  "NorthAmerica History": ["history", "north-america"],
-  "NorthAmerica Literature": ["literature", "north-america"],
-  "NorthAmerica Science": ["sciences", "north-america"],
-  "NorthAmerica Sports": ["sports", "north-america"],
-  "NorthAmerica Traditions": ["traditions", "north-america"],
-  "Oceania Geography": ["geography", "oceania"],
-  "Oceania History": ["history", "oceania"],
-  "Oceania Literature": ["literature", "oceania"],
-  "Oceania Science": ["sciences", "oceania"],
-  "Oceania Traditions": ["traditions", "oceania"],
-  "Screens Cinema": ["screens", "cinema"],
-  "Screens Series": ["screens", "series"],
-  "Screens TV": ["screens", "television"],
-  "SouthAmerica Art": ["arts", "south-america"],
-  "SouthAmerica Geography": ["geography", "south-america"],
-  "SouthAmerica History": ["history", "south-america"],
-  "SouthAmerica Literature": ["literature", "south-america"],
-  "SouthAmerica Science": ["sciences", "south-america"],
-  "SouthAmerica Sports": ["sports", "south-america"],
-  "SouthAmerica Traditions": ["traditions", "south-america"],
-  "Sciences Physics": ["sciences-2", "physics"],
-  "Sciences Chemistry": ["sciences-2", "chemistry"],
-  "Sciences Space": ["sciences-2", "space"],
-  "Sciences Geology": ["sciences-2", "geology"],
-  "Sciences Biology": ["sciences-2", "biology"],
-  "Sciences HumanBody": ["sciences-2", "human-body"],
-  "Sciences Earth & Climate": ["sciences-2", "earth-and-climate"],
-  "Sciences Technology": ["sciences-2", "technology"],
-  "Sports Football": ["sports-2", "football"],
-  "Sports Basketball": ["sports-2", "basketball"],
-  "Sports Tennis": ["sports-2", "tennis"],
-  "Sports Racing": ["sports-2", "racing"],
-  "Sports Athletics": ["sports-2", "athletics"],
-  "Sports Gymnastic": ["sports-2", "gymnastics"],
-  "Sports Olympic Games": ["sports-2", "olympic-games"],
-  "Sports Golf": ["sports-2", "golf"],
-  "Sports Combat Sports": ["sports-2", "combat-sports"],
-};
+interface IndexComponent {
+  groups: string;
+  subgroups: string;
+  subgroupId: string;
+  ratio: number | null;
+}
 
-export const TOP_LEVEL_TAGS = [
-  "history", "geography", "traditions", "arts", "literature",
-  "sciences", "sports", "music", "screens", "sciences-2", "sports-2",
-];
-export const CONTINENT_TAGS = ["europe", "asia", "north-america", "south-america", "africa", "oceania"];
+interface IndexEntry {
+  id: string;
+  name: string;
+  hierarchy: number;
+  components: IndexComponent[];
+}
 
-function stripInternalTagFields(text: string): string {
-  return text
-    .split("\n")
-    .filter((line) => !/["“”](sub)?(category|group)["“”]\s*:/i.test(line))
-    .join("\n");
+interface ParsedSubjectIndex {
+  entries: IndexEntry[];
+  /** normalized "groups subgroups" -> 3-digit code, from column F. */
+  subjectCodes: Map<string, string>;
+  ratioTotalMismatches: string[];
+}
+
+function isCombinedEntry(entry: IndexEntry): boolean {
+  return entry.components.length > 1 || (entry.components.length === 1 && entry.components[0].ratio !== null);
+}
+
+/**
+ * Parses the Drive index's 7-column format:
+ * id;Subject;Hierarchy;Groups;Subgroups;ID of the Subgroup;Ratio
+ *
+ * A combined Subject spans multiple rows: the first row carries its id,
+ * Subject name and Hierarchy plus its first component; continuation rows
+ * leave those three blank and add one more component each. Groups is
+ * sometimes also left blank on a continuation row when it's constant across
+ * the whole block (e.g. "Sciences 2") — carried forward from the block's
+ * most recent non-blank Groups value in that case.
+ *
+ * A Subject is "combined" when it's detected structurally — multiple
+ * components, or a single component that still carries a ratio — NOT gated
+ * on hierarchy === 1, since the 6 continent catch-alls carry real ratios at
+ * hierarchy 2.
+ */
+export function parseSubjectIndex(csvText: string): ParsedSubjectIndex {
+  const withoutBom = csvText.replace(/^﻿/, "");
+  const lines = withoutBom.split("\n").map((l) => l.trimEnd()).filter((l) => l.length > 0);
+  const dataLines = lines.slice(1); // drop the header row
+
+  const entries: IndexEntry[] = [];
+  const subjectCodes = new Map<string, string>();
+  let current: IndexEntry | null = null;
+  let currentGroups = "";
+
+  for (const line of dataLines) {
+    const [id, name, hierarchy, groupsRaw, subgroupsRaw, subgroupIdRaw, ratioRaw] = line.split(";");
+    const groups = (groupsRaw ?? "").trim();
+    const subgroups = (subgroupsRaw ?? "").trim();
+
+    if ((name ?? "").trim() !== "") {
+      current = { id: (id ?? "").trim(), name: name.trim(), hierarchy: Number((hierarchy ?? "").trim()), components: [] };
+      entries.push(current);
+      currentGroups = groups;
+    }
+    if (!current) continue;
+    if (subgroups === "") continue; // blank trailer row past the real data
+
+    const effectiveGroups = groups !== "" ? groups : currentGroups;
+    currentGroups = effectiveGroups;
+    const ratioTrimmed = (ratioRaw ?? "").trim();
+    const ratio = ratioTrimmed === "" ? null : Number(ratioTrimmed.replace(",", "."));
+    const code = (subgroupIdRaw ?? "").trim();
+
+    current.components.push({ groups: effectiveGroups, subgroups, subgroupId: code, ratio });
+    if (code !== "") {
+      subjectCodes.set(pairKeyOf(effectiveGroups, subgroups), code);
+    }
+  }
+
+  const ratioTotalMismatches: string[] = [];
+  for (const entry of entries) {
+    if (!isCombinedEntry(entry)) continue;
+    const total = entry.components.reduce((sum, c) => sum + (c.ratio ?? 0), 0);
+    if (Math.abs(total - 10) > 1e-9) {
+      ratioTotalMismatches.push(`${entry.name}: ratios sum to ${total}, expected 10`);
+    }
+  }
+
+  return { entries, subjectCodes, ratioTotalMismatches };
+}
+
+export function buildQuestionId(subjectCode: string, fileRank: number, sourceId: number): number {
+  return Number(subjectCode.padStart(3, "0") + String(fileRank).padStart(2, "0") + String(sourceId).padStart(4, "0"));
 }
 
 interface RawQuestion {
   id?: unknown;
+  group?: unknown;
+  subgroup?: unknown;
   level?: unknown;
   question?: unknown;
   answers?: unknown;
   correct?: unknown;
   media_url?: unknown;
-  subcategories?: unknown;
 }
 
 function validateQuestion(q: RawQuestion): string[] {
   const errors: string[] = [];
-  if (!Number.isInteger(q.id)) errors.push("id: must be an integer");
+  if (!Number.isInteger(q.id) || (q.id as number) < 1 || (q.id as number) > 9999) {
+    errors.push(`id: must be an integer 1-9999 (got ${JSON.stringify(q.id)})`);
+  }
   if (![1, 2, 3].includes(q.level as number)) errors.push(`level: must be 1, 2, or 3 (got ${JSON.stringify(q.level)})`);
   if (!q.question || typeof q.question !== "string" || q.question.trim() === "") errors.push("question: must be a non-empty string");
   if (!Array.isArray(q.answers) || q.answers.length !== 4) {
@@ -230,53 +215,171 @@ function validateQuestion(q: RawQuestion): string[] {
   return errors;
 }
 
+function catTag(entryId: string): string {
+  return `cat-${entryId}`;
+}
+
+function sortSubjects(categories: Category[]): Category[] {
+  const collator = new Intl.Collator("en", { sensitivity: "base" });
+  return [...categories].sort((a, b) => {
+    if (a.kind !== b.kind) return 0; // never compares across tiers — grouped by caller
+    const aBizarre = a.label === "Bizarre";
+    const bBizarre = b.label === "Bizarre";
+    if (a.kind === "top-level" && (aBizarre || bBizarre)) {
+      if (aBizarre && !bBizarre) return 1;
+      if (bBizarre && !aBizarre) return -1;
+    }
+    return collator.compare(a.label, b.label);
+  });
+}
+
+function buildCategories(entries: IndexEntry[], presentPairs: Set<string>): Category[] {
+  const byTier: Record<SubjectTier, Category[]> = { "top-level": [], combo: [], modifier: [] };
+  for (const entry of entries) {
+    const hasContent = entry.components.some((c) => presentPairs.has(pairKeyOf(c.groups, c.subgroups)));
+    if (!hasContent) continue; // index row with no backing file — don't display (rule #3)
+    const tag = catTag(entry.id);
+    const kind = hierarchyToKind(entry.hierarchy);
+    byTier[kind].push({ key: tag, label: entry.name, tags: [tag], matchMode: "all", kind });
+  }
+  return [...sortSubjects(byTier["top-level"]), ...sortSubjects(byTier.combo), ...sortSubjects(byTier.modifier)];
+}
+
+function buildCombinedCategoryRatios(entries: IndexEntry[]): Record<string, RatioComponent[]> {
+  const combined: Record<string, RatioComponent[]> = {};
+  for (const entry of entries) {
+    if (!isCombinedEntry(entry)) continue;
+    const tag = catTag(entry.id);
+    combined[tag] = entry.components.map((c) => ({
+      tags: [catTag(leafEntryIdFor(entries, c.groups, c.subgroups) ?? entry.id)] as [string],
+      ratio: c.ratio ?? 0,
+    }));
+  }
+  return combined;
+}
+
+// The single-component entry that "owns" a given Group/Subgroup pair (e.g.
+// "History of Europe" for Europe/History) — every real pair has exactly one.
+// Falls back to the combined entry's own id if none is found (defensive;
+// doesn't happen with real data, but avoids an undefined tag).
+function leafEntryIdFor(entries: IndexEntry[], groups: string, subgroups: string): string | null {
+  const key = pairKeyOf(groups, subgroups);
+  const leaf = entries.find((e) => e.components.length === 1 && pairKeyOf(e.components[0].groups, e.components[0].subgroups) === key);
+  return leaf?.id ?? null;
+}
+
 /**
- * Merge raw-source files + the image-questions supplement + the ratio index
- * into the compiled bank. Pure function: no fs, no network — callers own
- * fetching the inputs (local disk or R2) and persisting the outputs.
+ * Merge raw-source files + the image-questions supplement + the Subject
+ * index into the compiled bank. Pure function: no fs, no network — callers
+ * own fetching the inputs (local disk or R2) and persisting the outputs.
  */
 export function mergeQuestionBank(input: {
   files: MergeInputFile[];
   imageQuestionsRaw: string;
   ratioCsv: string | null;
 }): MergeResult {
-  const failures: string[] = [];
-  const perFileCounts: Record<string, number> = {};
-
-  const missingMapping = input.files.filter((f) => !(f.name in TAG_MAP));
-  if (missingMapping.length > 0) {
-    throw new Error(`No TAG_MAP entry for: ${missingMapping.map((f) => f.name).join(", ")}`);
+  if (!input.ratioCsv) {
+    throw new Error("Subject index is required — mergeQuestionBank can no longer run without it.");
   }
 
-  let nextId = 1;
-  const merged: Question[] = [];
+  const failures: string[] = [];
+  const perFileCounts: Record<string, number> = {};
+  const unmatchedFiles: string[] = [];
+
+  const index = parseSubjectIndex(input.ratioCsv);
+
+  const indexPairKeys = new Set<string>();
+  for (const entry of index.entries) {
+    for (const c of entry.components) indexPairKeys.add(pairKeyOf(c.groups, c.subgroups));
+  }
+  // Every entry (of any hierarchy) that lists a given pair as a component —
+  // a real pair typically appears in its own leaf entry plus 1-2 combined
+  // ones (e.g. Europe/History → "History of Europe", "History", "Europe").
+  const entriesByPair = new Map<string, IndexEntry[]>();
+  for (const entry of index.entries) {
+    for (const c of entry.components) {
+      const key = pairKeyOf(c.groups, c.subgroups);
+      const list = entriesByPair.get(key) ?? [];
+      list.push(entry);
+      entriesByPair.set(key, list);
+    }
+  }
+
+  interface ParsedFile {
+    file: MergeInputFile;
+    pairKey: string;
+    groups: string;
+    subgroups: string;
+    rows: RawQuestion[];
+  }
+  const parsedFiles: ParsedFile[] = [];
 
   for (const file of input.files) {
-    const tags = TAG_MAP[file.name];
-    const cleaned = stripInternalTagFields(file.content);
-
     let parsed: unknown;
     try {
-      parsed = JSON.parse(cleaned);
+      parsed = JSON.parse(file.content);
     } catch (err) {
       failures.push(`${file.name}.json: JSON parse error — ${(err as Error).message}`);
       continue;
     }
-    if (!Array.isArray(parsed)) {
-      failures.push(`${file.name}.json: expected a top-level array`);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      failures.push(`${file.name}.json: expected a non-empty top-level array`);
       continue;
     }
+    const first = parsed[0] as RawQuestion;
+    const groups = typeof first.group === "string" ? first.group.trim() : "";
+    const subgroups = typeof first.subgroup === "string" ? first.subgroup.trim() : "";
+    const pairKey = pairKeyOf(groups, subgroups);
+
+    if (!indexPairKeys.has(pairKey)) {
+      unmatchedFiles.push(`${file.name}.json (group="${groups}", subgroup="${subgroups}")`);
+      continue;
+    }
+    parsedFiles.push({ file, pairKey, groups, subgroups, rows: parsed as RawQuestion[] });
+  }
+
+  // Alphabetical rank among files sharing the same Group/Subgroup pair —
+  // always resolves to 1 today (no duplicate pairs across real files), but
+  // means a future second file for the same pair works with no migration.
+  const rankByFileName = new Map<string, number>();
+  const byPair = new Map<string, ParsedFile[]>();
+  for (const pf of parsedFiles) {
+    const list = byPair.get(pf.pairKey) ?? [];
+    list.push(pf);
+    byPair.set(pf.pairKey, list);
+  }
+  for (const list of byPair.values()) {
+    const sorted = [...list].sort((a, b) => a.file.name.localeCompare(b.file.name));
+    sorted.forEach((pf, i) => rankByFileName.set(pf.file.name, i + 1));
+  }
+
+  const merged: Question[] = [];
+  const presentPairs = new Set<string>();
+
+  for (const pf of parsedFiles) {
+    const subjectCode = index.subjectCodes.get(pf.pairKey);
+    if (!subjectCode) {
+      unmatchedFiles.push(`${pf.file.name}.json (group="${pf.groups}", subgroup="${pf.subgroups}" — index row has no "ID of the Subgroup")`);
+      continue;
+    }
+    const fileRank = rankByFileName.get(pf.file.name)!;
+    presentPairs.add(pf.pairKey);
+
+    const owningEntries = entriesByPair.get(pf.pairKey) ?? [];
+    const catTags = owningEntries.map((e) => catTag(e.id));
+    const legacyTags = owningEntries.map((e) => LEGACY_TAG_BY_SUBJECT_NAME[e.name]).filter((t): t is string => !!t);
+    const subcategories = [...new Set([...catTags, ...legacyTags])];
 
     let fileCount = 0;
-    for (const [i, q] of (parsed as RawQuestion[]).entries()) {
+    for (const [i, q] of pf.rows.entries()) {
       const errors = validateQuestion(q);
       if (errors.length > 0) {
-        failures.push(`${file.name}.json row ${i + 1} (id=${(q as { id?: unknown })?.id ?? "?"}): ${errors.join("; ")}`);
+        failures.push(`${pf.file.name}.json row ${i + 1} (id=${(q as { id?: unknown })?.id ?? "?"}): ${errors.join("; ")}`);
         continue;
       }
       merged.push({
-        id: nextId++,
-        subcategories: tags,
+        id: buildQuestionId(subjectCode, fileRank, q.id as number),
+        subcategories,
         level: q.level as 1 | 2 | 3,
         question: (q.question as string).trim(),
         answers: (q.answers as string[]).map((a) => a.trim()) as [string, string, string, string],
@@ -285,19 +388,26 @@ export function mergeQuestionBank(input: {
       });
       fileCount++;
     }
-    perFileCounts[`${file.name}.json`] = fileCount;
+    perFileCounts[`${pf.file.name}.json`] = fileCount;
   }
 
+  // Static hand-curated supplement — kept on the old flat topic/continent
+  // tagging (not retagged to cat-* Subjects here; out of scope for this
+  // pass), so these questions stay in the general pool but won't surface
+  // under any specific Subject filter until retagged. Ids count down from
+  // -1, a small fixed-size range distinct from AI questions' negative ids
+  // (which are offset well past -1,000,000 — see db.server.ts).
   const imageQuestionsRaw = JSON.parse(input.imageQuestionsRaw) as (RawQuestion & { subcategories: string[] })[];
   let imageQuestionCount = 0;
+  let nextImageId = -1;
   for (const [i, q] of imageQuestionsRaw.entries()) {
-    const errors = validateQuestion({ ...q, id: 0 });
+    const errors = validateQuestion({ ...q, id: 1 });
     if (errors.length > 0) {
       failures.push(`image-questions.json row ${i + 1}: ${errors.join("; ")}`);
       continue;
     }
     merged.push({
-      id: nextId++,
+      id: nextImageId--,
       subcategories: q.subcategories,
       level: q.level as 1 | 2 | 3,
       question: (q.question as string).trim(),
@@ -313,18 +423,16 @@ export function mergeQuestionBank(input: {
     throw new Error("No valid questions produced — aborting without writing output.");
   }
 
-  const taxonomy: Taxonomy = { topLevel: TOP_LEVEL_TAGS, continents: CONTINENT_TAGS, centuries: [] };
-  const categories = deriveCategories(merged, taxonomy);
+  const indexOnlySubjects = index.entries
+    .filter((e) => !e.components.some((c) => presentPairs.has(pairKeyOf(c.groups, c.subgroups))))
+    .map((e) => e.name);
 
-  let combinedCategories: Record<string, RatioComponent[]> = {};
-  let skippedRatioBlocks: string[] = [];
-  let ratioTotalMismatches: string[] = [];
-  if (input.ratioCsv) {
-    const parsed = parseCombinedCategoryRatios(input.ratioCsv, TOP_LEVEL_TAGS, CONTINENT_TAGS);
-    combinedCategories = parsed.combined;
-    skippedRatioBlocks = parsed.skipped;
-    ratioTotalMismatches = parsed.totalMismatches;
-  }
+  const taxonomy: Taxonomy = {
+    topLevel: LEGACY_TOP_LEVEL_TAGS,
+    domains: index.entries.filter(isCombinedEntry).map((e) => catTag(e.id)),
+  };
+  const categories = buildCategories(index.entries, presentPairs);
+  const combinedCategories = buildCombinedCategoryRatios(index.entries);
 
   return {
     questions: merged,
@@ -333,7 +441,8 @@ export function mergeQuestionBank(input: {
     combinedCategories,
     perFileCounts,
     failures,
-    skippedRatioBlocks,
-    ratioTotalMismatches,
+    unmatchedFiles,
+    indexOnlySubjects,
+    ratioTotalMismatches: index.ratioTotalMismatches,
   };
 }

@@ -38,7 +38,7 @@ async function listAllRawSourceJsonKeys(storage: R2Bucket): Promise<string[]> {
     const page = await storage.list({ prefix: RAW_PREFIX, cursor });
     for (const obj of page.objects) {
       if (!obj.key.endsWith(".json")) continue;
-      if (obj.key === IMAGE_QUESTIONS_KEY) continue; // handled separately, isn't a TAG_MAP file
+      if (obj.key === IMAGE_QUESTIONS_KEY) continue; // handled separately, not a raw-source question file
       if (obj.key === INDEX_JSON_KEY) continue;
       keys.push(obj.key);
     }
@@ -54,7 +54,8 @@ export interface SyncReport {
   categoryCount?: number;
   perFileCounts?: Record<string, number>;
   failures?: string[];
-  skippedRatioBlocks?: string[];
+  unmatchedFiles?: string[];
+  indexOnlySubjects?: string[];
   ratioTotalMismatches?: string[];
   error?: string;
 }
@@ -96,7 +97,8 @@ export async function syncQuestionBankFromR2(storage: R2Bucket): Promise<SyncRep
       categoryCount: result.categories.length,
       perFileCounts: result.perFileCounts,
       failures: result.failures,
-      skippedRatioBlocks: result.skippedRatioBlocks,
+      unmatchedFiles: result.unmatchedFiles,
+      indexOnlySubjects: result.indexOnlySubjects,
       ratioTotalMismatches: result.ratioTotalMismatches,
     };
     await storage.put(`${COMPILED_PREFIX}sync-report.json`, JSON.stringify(report, null, 2));

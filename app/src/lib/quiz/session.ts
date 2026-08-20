@@ -45,7 +45,11 @@ async function buildQuestionSet(
 
   const usedIds = new Set<number>();
   const picks: Question[] = [];
-  const tags = shuffleFn(TAXONOMY.topLevel);
+  // Round-robins across every combined Subject (Domains + the continent/
+  // catch-all Categories), not just the 11 legacy topLevel tags — those
+  // stay reserved for badges.ts/categoryPlays crediting (topLevelTagsForQuestions
+  // below), which is a separate concern from what Daily/Weekly draws from.
+  const tags = shuffleFn(TAXONOMY.domains);
   // Each top-level tag's own pool is ordered by its combined-category
   // component ratios (see ratio-sampling.ts) when it has one — the
   // round-robin consumption below is unchanged, only the order each tag's

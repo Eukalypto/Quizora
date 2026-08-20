@@ -16,10 +16,17 @@ import type {
   WeeklyHistoryEntry,
 } from "./types";
 
-// Synthetic ids for AI-generated Daily/Weekly questions — offset well clear
-// of every real question id (11k-ish today) so they never collide with
-// ALL_QUESTIONS, while staying a plain `number` like every other Question id.
-const AI_QUESTION_ID_OFFSET = 1_000_000;
+// Synthetic ids for AI-generated Daily/Weekly questions — negative, so they
+// never collide with real question ids (now composite Subject-code-based
+// numbers that can exceed the old fixed +1,000,000 offset) while staying a
+// plain `number` like every other Question id. Offset well past the
+// image-questions supplement's negative ids (question-merge.ts counts down
+// from -1, a small fixed-size file) so the two negative ranges never touch.
+const AI_QUESTION_ID_FLOOR = -1_000_000;
+
+function aiQuestionId(poolId: number): number {
+  return AI_QUESTION_ID_FLOOR - poolId;
+}
 
 function randomLevel(): 1 | 2 | 3 {
   return (Math.floor(Math.random() * 3) + 1) as 1 | 2 | 3;
@@ -27,7 +34,7 @@ function randomLevel(): 1 | 2 | 3 {
 
 function aiQuestionToQuestion(ai: MysteryPoolQuestion): Question {
   return {
-    id: AI_QUESTION_ID_OFFSET + ai.poolId,
+    id: aiQuestionId(ai.poolId),
     subcategories: ["ai-generated"],
     level: ai.level,
     question: "What is this?",
@@ -320,7 +327,7 @@ interface StoredAiRow {
 
 function storedAiRowToQuestion(r: StoredAiRow): Question {
   return {
-    id: AI_QUESTION_ID_OFFSET + r.pool_id,
+    id: aiQuestionId(r.pool_id),
     subcategories: ["ai-generated"],
     level: r.level as 1 | 2 | 3,
     question: "What is this?",

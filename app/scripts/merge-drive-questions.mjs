@@ -2,9 +2,11 @@
 // One-shot ingestion of the real Drive-sourced question bank into
 // src/data/questions.json + src/data/taxonomy.json, replacing the mock set.
 //
-// Source: app/scripts/raw-source/*.json — one file per (continent, topic) or
-// (subject-group, subtopic) pair, fetched verbatim from the shared Drive
-// folder. Filenames encode the pair authoritatively; see TAG_MAP in
+// Source: app/scripts/raw-source/*.json — one file per (Group, Subgroup)
+// pair, fetched verbatim from the shared Drive folder, plus the Subject
+// index (_Index.csv). Each file's own internal group/subgroup fields are
+// matched against the index — not the filename — to determine its Subject
+// identity, tags, and question ids; see parseSubjectIndex in
 // src/lib/quiz/question-merge.ts.
 //
 // The actual merge/validate/tag logic lives in that shared, isomorphic
@@ -64,6 +66,15 @@ async function main() {
     if (result.failures.length > 50) console.error(`  ...and ${result.failures.length - 50} more`);
   }
 
+  if (result.unmatchedFiles.length > 0) {
+    console.log(`\n${result.unmatchedFiles.length} file(s) had no matching index row (group/subgroup spelling drift?) — skipped:`);
+    for (const f of result.unmatchedFiles) console.log(`  - ${f}`);
+  }
+  if (result.indexOnlySubjects.length > 0) {
+    console.log(`\n${result.indexOnlySubjects.length} index Subject(s) with no matching file — not displayed:`);
+    for (const s of result.indexOnlySubjects) console.log(`  - ${s}`);
+  }
+
   await writeFile(QUESTIONS_OUT, JSON.stringify(result.questions, null, 2) + "\n", "utf-8");
   await writeFile(TAXONOMY_OUT, JSON.stringify(result.taxonomy, null, 2) + "\n", "utf-8");
   await writeFile(CATEGORIES_OUT, JSON.stringify(result.categories, null, 2) + "\n", "utf-8");
@@ -78,10 +89,6 @@ async function main() {
     if (result.ratioTotalMismatches.length > 0) {
       console.error(`\n✖ ${result.ratioTotalMismatches.length} combined categor${result.ratioTotalMismatches.length === 1 ? "y" : "ies"} with ratios not summing to 10:`);
       for (const m of result.ratioTotalMismatches) console.error(`  - ${m}`);
-    }
-    if (result.skippedRatioBlocks.length > 0) {
-      console.log(`\nSkipped ${result.skippedRatioBlocks.length} combined categor${result.skippedRatioBlocks.length === 1 ? "y" : "ies"} not yet mappable to a pickable category:`);
-      for (const s of result.skippedRatioBlocks) console.log(`  - ${s}`);
     }
   } else {
     console.log(`\n(no ${path.relative(process.cwd(), RATIO_INDEX_PATH)} found — skipping combined-category ratios)`);
