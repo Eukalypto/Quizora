@@ -1,677 +1,792 @@
 [
   {
-    "key": "history",
-    "label": "History",
-    "tags": [
-      "history"
-    ],
-    "matchMode": "all",
-    "kind": "top-level"
-  },
-  {
-    "key": "geography",
-    "label": "Geography",
-    "tags": [
-      "geography"
-    ],
-    "matchMode": "all",
-    "kind": "top-level"
-  },
-  {
-    "key": "traditions",
-    "label": "Traditions",
-    "tags": [
-      "traditions"
-    ],
-    "matchMode": "all",
-    "kind": "top-level"
-  },
-  {
-    "key": "arts",
+    "key": "cat-28",
     "label": "Arts",
     "tags": [
-      "arts"
+      "cat-28"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "literature",
+    "key": "cat-95",
+    "label": "Entertainment",
+    "tags": [
+      "cat-95"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-14",
+    "label": "Geography",
+    "tags": [
+      "cat-14"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-7",
+    "label": "History",
+    "tags": [
+      "cat-7"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-35",
     "label": "Literature",
     "tags": [
-      "literature"
+      "cat-35"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "sciences",
-    "label": "Sciences 1",
-    "tags": [
-      "sciences"
-    ],
-    "matchMode": "all",
-    "kind": "top-level"
-  },
-  {
-    "key": "sports",
-    "label": "Sports 1",
-    "tags": [
-      "sports"
-    ],
-    "matchMode": "all",
-    "kind": "top-level"
-  },
-  {
-    "key": "music",
+    "key": "cat-78",
     "label": "Music",
     "tags": [
-      "music"
+      "cat-78"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "screens",
-    "label": "Screens",
+    "key": "cat-42",
+    "label": "Sciences 1",
     "tags": [
-      "screens"
+      "cat-42"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "sciences-2",
+    "key": "cat-64",
     "label": "Sciences 2",
     "tags": [
-      "sciences-2"
+      "cat-64"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "sports-2",
+    "key": "cat-68",
+    "label": "Screen Arts",
+    "tags": [
+      "cat-68"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-49",
+    "label": "Sports 1",
+    "tags": [
+      "cat-49"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-94",
     "label": "Sports 2",
     "tags": [
-      "sports-2"
+      "cat-94"
     ],
     "matchMode": "all",
     "kind": "top-level"
   },
   {
-    "key": "history__europe",
-    "label": "History of Europe",
+    "key": "cat-21",
+    "label": "Traditions",
     "tags": [
-      "history",
-      "europe"
+      "cat-21"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-84",
+    "label": "Visual Arts",
+    "tags": [
+      "cat-84"
+    ],
+    "matchMode": "all",
+    "kind": "top-level"
+  },
+  {
+    "key": "cat-54",
+    "label": "Africa",
+    "tags": [
+      "cat-54"
     ],
     "matchMode": "all",
     "kind": "combo"
   },
   {
-    "key": "history__asia",
-    "label": "History of Asia",
+    "key": "cat-81",
+    "label": "Architecture",
     "tags": [
-      "history",
-      "asia"
+      "cat-81"
     ],
     "matchMode": "all",
     "kind": "combo"
   },
   {
-    "key": "history__north-america",
-    "label": "History of North America",
+    "key": "cat-51",
+    "label": "Asia",
     "tags": [
-      "history",
-      "north-america"
+      "cat-51"
     ],
     "matchMode": "all",
     "kind": "combo"
   },
   {
-    "key": "history__south-america",
-    "label": "History of South America",
-    "tags": [
-      "history",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "history__africa",
-    "label": "History of Africa",
-    "tags": [
-      "history",
-      "africa"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "history__oceania",
-    "label": "History of Oceania",
-    "tags": [
-      "history",
-      "oceania"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__europe",
-    "label": "Geography of Europe",
-    "tags": [
-      "geography",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__asia",
-    "label": "Geography of Asia",
-    "tags": [
-      "geography",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__north-america",
-    "label": "Geography of North America",
-    "tags": [
-      "geography",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__south-america",
-    "label": "Geography of South America",
-    "tags": [
-      "geography",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__africa",
-    "label": "Geography of Africa",
-    "tags": [
-      "geography",
-      "africa"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "geography__oceania",
-    "label": "Geography of Oceania",
-    "tags": [
-      "geography",
-      "oceania"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__europe",
-    "label": "Traditions of Europe",
-    "tags": [
-      "traditions",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__asia",
-    "label": "Traditions of Asia",
-    "tags": [
-      "traditions",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__north-america",
-    "label": "Traditions of North America",
-    "tags": [
-      "traditions",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__south-america",
-    "label": "Traditions of South America",
-    "tags": [
-      "traditions",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__africa",
-    "label": "Traditions of Africa",
-    "tags": [
-      "traditions",
-      "africa"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "traditions__oceania",
-    "label": "Traditions of Oceania",
-    "tags": [
-      "traditions",
-      "oceania"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "arts__europe",
-    "label": "Arts of Europe",
-    "tags": [
-      "arts",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "arts__asia",
-    "label": "Arts of Asia",
-    "tags": [
-      "arts",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "arts__north-america",
-    "label": "Arts of North America",
-    "tags": [
-      "arts",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "arts__south-america",
-    "label": "Arts of South America",
-    "tags": [
-      "arts",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__europe",
-    "label": "Literature of Europe",
-    "tags": [
-      "literature",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__asia",
-    "label": "Literature of Asia",
-    "tags": [
-      "literature",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__north-america",
-    "label": "Literature of North America",
-    "tags": [
-      "literature",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__south-america",
-    "label": "Literature of South America",
-    "tags": [
-      "literature",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__africa",
-    "label": "Literature of Africa",
-    "tags": [
-      "literature",
-      "africa"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "literature__oceania",
-    "label": "Literature of Oceania",
-    "tags": [
-      "literature",
-      "oceania"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__europe",
-    "label": "Sciences of Europe",
-    "tags": [
-      "sciences",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__asia",
-    "label": "Sciences of Asia",
-    "tags": [
-      "sciences",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__north-america",
-    "label": "Sciences of North America",
-    "tags": [
-      "sciences",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__south-america",
-    "label": "Sciences of South America",
-    "tags": [
-      "sciences",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__africa",
-    "label": "Sciences of Africa",
-    "tags": [
-      "sciences",
-      "africa"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sciences__oceania",
-    "label": "Sciences of Oceania",
-    "tags": [
-      "sciences",
-      "oceania"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sports__europe",
-    "label": "Sports of Europe",
-    "tags": [
-      "sports",
-      "europe"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sports__asia",
-    "label": "Sports of Asia",
-    "tags": [
-      "sports",
-      "asia"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sports__north-america",
-    "label": "Sports of North America",
-    "tags": [
-      "sports",
-      "north-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "sports__south-america",
-    "label": "Sports of South America",
-    "tags": [
-      "sports",
-      "south-america"
-    ],
-    "matchMode": "all",
-    "kind": "combo"
-  },
-  {
-    "key": "technology",
-    "label": "Technology",
-    "tags": [
-      "technology"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "basketball",
-    "label": "Basketball",
-    "tags": [
-      "basketball"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "television",
-    "label": "Television",
-    "tags": [
-      "television"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "human-body",
-    "label": "Human Body",
-    "tags": [
-      "human-body"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "gymnastics",
-    "label": "Gymnastics",
-    "tags": [
-      "gymnastics"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "classical-music",
-    "label": "Classical Music",
-    "tags": [
-      "classical-music"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "rock",
-    "label": "Rock",
-    "tags": [
-      "rock"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "tennis",
-    "label": "Tennis",
-    "tags": [
-      "tennis"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "chemistry",
-    "label": "Chemistry",
-    "tags": [
-      "chemistry"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "series",
-    "label": "Series",
-    "tags": [
-      "series"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "athletics",
+    "key": "cat-89",
     "label": "Athletics",
     "tags": [
-      "athletics"
+      "cat-89"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "earth-and-climate",
-    "label": "Earth And Climate",
+    "key": "cat-86",
+    "label": "Basketball",
     "tags": [
-      "earth-and-climate"
+      "cat-86"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "cinema",
-    "label": "Cinema",
-    "tags": [
-      "cinema"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "physics",
-    "label": "Physics",
-    "tags": [
-      "physics"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "biology",
+    "key": "cat-60",
     "label": "Biology",
     "tags": [
-      "biology"
+      "cat-60"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "golf",
-    "label": "Golf",
+    "key": "cat-57",
+    "label": "Chemistry",
     "tags": [
-      "golf"
+      "cat-57"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "space",
-    "label": "Space",
+    "key": "cat-65",
+    "label": "Cinema",
     "tags": [
-      "space"
+      "cat-65"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "racing",
-    "label": "Racing",
+    "key": "cat-69",
+    "label": "Classical Music",
     "tags": [
-      "racing"
+      "cat-69"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "geology",
-    "label": "Geology",
-    "tags": [
-      "geology"
-    ],
-    "matchMode": "all",
-    "kind": "modifier"
-  },
-  {
-    "key": "combat-sports",
+    "key": "cat-93",
     "label": "Combat Sports",
     "tags": [
-      "combat-sports"
+      "cat-93"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "football",
-    "label": "Football",
+    "key": "cat-50",
+    "label": "Europe",
     "tags": [
-      "football"
+      "cat-50"
     ],
     "matchMode": "all",
-    "kind": "modifier"
+    "kind": "combo"
   },
   {
-    "key": "olympic-games",
+    "key": "cat-59",
+    "label": "Geology",
+    "tags": [
+      "cat-59"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-92",
+    "label": "Golf",
+    "tags": [
+      "cat-92"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-61",
+    "label": "Human Body",
+    "tags": [
+      "cat-61"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-71",
+    "label": "Jazz & Blues",
+    "tags": [
+      "cat-71"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-97",
+    "label": "Math",
+    "tags": [
+      "cat-97"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-52",
+    "label": "North America",
+    "tags": [
+      "cat-52"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-55",
+    "label": "Oceania",
+    "tags": [
+      "cat-55"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-91",
     "label": "Olympic Games",
     "tags": [
-      "olympic-games"
+      "cat-91"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-82",
+    "label": "Photography",
+    "tags": [
+      "cat-82"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-56",
+    "label": "Physics",
+    "tags": [
+      "cat-56"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-72",
+    "label": "Pop",
+    "tags": [
+      "cat-72"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-88",
+    "label": "Racing",
+    "tags": [
+      "cat-88"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-70",
+    "label": "Rock",
+    "tags": [
+      "cat-70"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-80",
+    "label": "Sculpture",
+    "tags": [
+      "cat-80"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-53",
+    "label": "South America",
+    "tags": [
+      "cat-53"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-58",
+    "label": "Space",
+    "tags": [
+      "cat-58"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-63",
+    "label": "Technology",
+    "tags": [
+      "cat-63"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-87",
+    "label": "Tennis",
+    "tags": [
+      "cat-87"
+    ],
+    "matchMode": "all",
+    "kind": "combo"
+  },
+  {
+    "key": "cat-26",
+    "label": "Arts in Africa",
+    "tags": [
+      "cat-26"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-23",
+    "label": "Arts in Asia",
+    "tags": [
+      "cat-23"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-22",
+    "label": "Arts in Europe",
+    "tags": [
+      "cat-22"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-24",
+    "label": "Arts in North America",
+    "tags": [
+      "cat-24"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-27",
+    "label": "Arts in Oceania",
+    "tags": [
+      "cat-27"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-25",
+    "label": "Arts in South America",
+    "tags": [
+      "cat-25"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-16",
+    "label": "Asian Traditions",
+    "tags": [
+      "cat-16"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-15",
+    "label": "European Traditiosns",
+    "tags": [
+      "cat-15"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-12",
+    "label": "Geography of Africa",
+    "tags": [
+      "cat-12"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-9",
+    "label": "Geography of Asia",
+    "tags": [
+      "cat-9"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-8",
+    "label": "Geography of Europe",
+    "tags": [
+      "cat-8"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-10",
+    "label": "Geography of North America",
+    "tags": [
+      "cat-10"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-13",
+    "label": "Geography of Oceania",
+    "tags": [
+      "cat-13"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-11",
+    "label": "Geography of South America",
+    "tags": [
+      "cat-11"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-5",
+    "label": "History of Africa",
+    "tags": [
+      "cat-5"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-2",
+    "label": "History of Asia",
+    "tags": [
+      "cat-2"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-1",
+    "label": "History of Europe",
+    "tags": [
+      "cat-1"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-3",
+    "label": "History of North America",
+    "tags": [
+      "cat-3"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-6",
+    "label": "History of Oceania",
+    "tags": [
+      "cat-6"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-4",
+    "label": "History of South America",
+    "tags": [
+      "cat-4"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-33",
+    "label": "Literature of Africa",
+    "tags": [
+      "cat-33"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-30",
+    "label": "Literature of Asia",
+    "tags": [
+      "cat-30"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-29",
+    "label": "Literature of Europe",
+    "tags": [
+      "cat-29"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-31",
+    "label": "Literature of North America",
+    "tags": [
+      "cat-31"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-34",
+    "label": "Literature of Oceania",
+    "tags": [
+      "cat-34"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-32",
+    "label": "Literature of South America",
+    "tags": [
+      "cat-32"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-77",
+    "label": "Music Theory",
+    "tags": [
+      "cat-77"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-76",
+    "label": "Musical Instruments",
+    "tags": [
+      "cat-76"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-17",
+    "label": "North American Traditions",
+    "tags": [
+      "cat-17"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-20",
+    "label": "Oceania",
+    "tags": [
+      "cat-20"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-40",
+    "label": "Science in Africa",
+    "tags": [
+      "cat-40"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-37",
+    "label": "Science in Asia",
+    "tags": [
+      "cat-37"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-36",
+    "label": "Science in Europe",
+    "tags": [
+      "cat-36"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-38",
+    "label": "Science in North America",
+    "tags": [
+      "cat-38"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-41",
+    "label": "Science in Oceania",
+    "tags": [
+      "cat-41"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-39",
+    "label": "Science in South America",
+    "tags": [
+      "cat-39"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-18",
+    "label": "South American Traditions",
+    "tags": [
+      "cat-18"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-47",
+    "label": "Sports in Africa",
+    "tags": [
+      "cat-47"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-44",
+    "label": "Sports in Asia",
+    "tags": [
+      "cat-44"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-43",
+    "label": "Sports in Europe",
+    "tags": [
+      "cat-43"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-45",
+    "label": "Sports in North America",
+    "tags": [
+      "cat-45"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-48",
+    "label": "Sports in Oceania",
+    "tags": [
+      "cat-48"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-46",
+    "label": "Sports in South America",
+    "tags": [
+      "cat-46"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-96",
+    "label": "Stand-up Comedy",
+    "tags": [
+      "cat-96"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-75",
+    "label": "World Music",
+    "tags": [
+      "cat-75"
+    ],
+    "matchMode": "all",
+    "kind": "modifier"
+  },
+  {
+    "key": "cat-99",
+    "label": "World Organizations",
+    "tags": [
+      "cat-99"
     ],
     "matchMode": "all",
     "kind": "modifier"

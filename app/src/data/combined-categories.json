@@ -1,433 +1,802 @@
 {
-  "history": [
+  "cat-7": [
     {
       "tags": [
-        "history",
-        "europe"
+        "cat-1"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "history",
-        "asia"
+        "cat-2"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "history",
-        "north-america"
+        "cat-3"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "history",
-        "south-america"
+        "cat-4"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "history",
-        "africa"
+        "cat-5"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "history",
-        "oceania"
+        "cat-6"
       ],
       "ratio": 0.5
     }
   ],
-  "geography": [
+  "cat-14": [
     {
       "tags": [
-        "geography",
-        "europe"
+        "cat-8"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "geography",
-        "asia"
+        "cat-9"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "geography",
-        "north-america"
+        "cat-10"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "geography",
-        "south-america"
+        "cat-11"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "geography",
-        "africa"
+        "cat-12"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "geography",
-        "oceania"
+        "cat-13"
       ],
       "ratio": 0.5
     }
   ],
-  "traditions": [
+  "cat-21": [
     {
       "tags": [
-        "traditions",
-        "europe"
+        "cat-15"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "traditions",
-        "asia"
+        "cat-16"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "traditions",
-        "north-america"
+        "cat-17"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "traditions",
-        "south-america"
+        "cat-18"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "traditions",
-        "africa"
+        "cat-19"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "traditions",
-        "oceania"
+        "cat-20"
       ],
       "ratio": 0.5
     }
   ],
-  "arts": [
+  "cat-28": [
     {
       "tags": [
-        "arts",
-        "europe"
+        "cat-22"
       ],
       "ratio": 3
     },
     {
       "tags": [
-        "arts",
-        "asia"
+        "cat-23"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "arts",
-        "north-america"
+        "cat-24"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "arts",
-        "south-america"
+        "cat-25"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "arts",
-        "africa"
+        "cat-26"
       ],
       "ratio": 0.5
     },
     {
       "tags": [
-        "arts",
-        "oceania"
+        "cat-27"
       ],
       "ratio": 0.5
     }
   ],
-  "literature": [
+  "cat-35": [
     {
       "tags": [
-        "literature",
-        "europe"
+        "cat-29"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "literature",
-        "asia"
+        "cat-30"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "literature",
-        "north-america"
+        "cat-31"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "literature",
-        "south-america"
+        "cat-32"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "literature",
-        "africa"
+        "cat-33"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "literature",
-        "oceania"
+        "cat-34"
       ],
       "ratio": 0.5
     }
   ],
-  "sciences": [
+  "cat-42": [
     {
       "tags": [
-        "sciences",
-        "europe"
+        "cat-36"
       ],
       "ratio": 3
     },
     {
       "tags": [
-        "sciences",
-        "asia"
+        "cat-37"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "sciences",
-        "north-america"
+        "cat-38"
       ],
       "ratio": 2.5
     },
     {
       "tags": [
-        "sciences",
-        "south-america"
+        "cat-39"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sciences",
-        "africa"
+        "cat-40"
       ],
       "ratio": 0.5
     },
     {
       "tags": [
-        "sciences",
-        "oceania"
+        "cat-41"
       ],
       "ratio": 0.5
     }
   ],
-  "sports": [
+  "cat-49": [
     {
       "tags": [
-        "sports",
-        "europe"
+        "cat-43"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "sports",
-        "asia"
+        "cat-44"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "sports",
-        "north-america"
+        "cat-45"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "sports",
-        "south-america"
+        "cat-46"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sports",
-        "africa"
+        "cat-47"
       ],
       "ratio": 2
     },
     {
       "tags": [
-        "sports",
-        "oceania"
+        "cat-48"
       ],
       "ratio": 0.5
     }
   ],
-  "sciences-2": [
+  "cat-50": [
     {
       "tags": [
-        "sciences-2",
-        "physics"
+        "cat-1"
       ],
-      "ratio": 1.5
+      "ratio": 2
     },
     {
       "tags": [
-        "sciences-2",
-        "chemistry"
+        "cat-8"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-15"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-22"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sciences-2",
-        "space"
+        "cat-29"
       ],
-      "ratio": 1.5
+      "ratio": 1
     },
     {
       "tags": [
-        "sciences-2",
-        "geology"
+        "cat-36"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-43"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-51": [
+    {
+      "tags": [
+        "cat-2"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-9"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-16"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-23"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-30"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-37"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-44"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-52": [
+    {
+      "tags": [
+        "cat-3"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-10"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-17"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-24"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-31"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-38"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-45"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-53": [
+    {
+      "tags": [
+        "cat-4"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-11"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-18"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-25"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-32"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-39"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-46"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-54": [
+    {
+      "tags": [
+        "cat-5"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-12"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "cat-19"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-26"
       ],
       "ratio": 0.5
     },
     {
       "tags": [
-        "sciences-2",
-        "biology"
+        "cat-33"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-40"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-47"
+      ],
+      "ratio": 2
+    }
+  ],
+  "cat-55": [
+    {
+      "tags": [
+        "cat-6"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "cat-13"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "cat-20"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-27"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-34"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-41"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-48"
+      ],
+      "ratio": 1.5
+    }
+  ],
+  "cat-64": [
+    {
+      "tags": [
+        "cat-56"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sciences-2",
-        "human-body"
+        "cat-57"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-58"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sciences-2",
-        "earth-and-climate"
+        "cat-59"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-60"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sciences-2",
-        "technology"
+        "cat-61"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "cat-62"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "cat-63"
       ],
       "ratio": 1
     }
   ],
-  "sports-2": [
+  "cat-68": [
     {
       "tags": [
-        "sports-2",
-        "football"
+        "cat-65"
+      ],
+      "ratio": 4
+    },
+    {
+      "tags": [
+        "cat-66"
+      ],
+      "ratio": 4
+    },
+    {
+      "tags": [
+        "cat-67"
+      ],
+      "ratio": 2
+    }
+  ],
+  "cat-78": [
+    {
+      "tags": [
+        "cat-69"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "cat-70"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "basketball"
+        "cat-71"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "tennis"
+        "cat-72"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "racing"
+        "cat-73"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "athletics"
+        "cat-74"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-75"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-76"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-77"
+      ],
+      "ratio": 0.5
+    }
+  ],
+  "cat-84": [
+    {
+      "tags": [
+        "cat-79"
+      ],
+      "ratio": 3.5
+    },
+    {
+      "tags": [
+        "cat-80"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-81"
+      ],
+      "ratio": 2
+    },
+    {
+      "tags": [
+        "cat-82"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sports-2",
-        "gymnastics"
+        "cat-83"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-94": [
+    {
+      "tags": [
+        "cat-85"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "olympic-games"
+        "cat-86"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-87"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-88"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-89"
       ],
       "ratio": 1.5
     },
     {
       "tags": [
-        "sports-2",
-        "golf"
+        "cat-90"
       ],
       "ratio": 1
     },
     {
       "tags": [
-        "sports-2",
-        "combat-sports"
+        "cat-91"
+      ],
+      "ratio": 1.5
+    },
+    {
+      "tags": [
+        "cat-92"
       ],
       "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-93"
+      ],
+      "ratio": 1
+    }
+  ],
+  "cat-95": [
+    {
+      "tags": [
+        "cat-65"
+      ],
+      "ratio": 3.5
+    },
+    {
+      "tags": [
+        "cat-66"
+      ],
+      "ratio": 2.5
+    },
+    {
+      "tags": [
+        "cat-67"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-70"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-71"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-72"
+      ],
+      "ratio": 1
+    },
+    {
+      "tags": [
+        "cat-73"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-74"
+      ],
+      "ratio": 0.5
+    },
+    {
+      "tags": [
+        "cat-96"
+      ],
+      "ratio": 0.5
     }
   ]
 }

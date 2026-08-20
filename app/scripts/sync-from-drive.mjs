@@ -25,7 +25,7 @@ const RAW_DIR = path.join(__dirname, "raw-source");
 // Sheet, e.g. if the index is later converted to one instead of a plain
 // .csv) — see the Apps Script source for exactly what it returns.
 const DRIVE_BUNDLE_URL =
-  "https://script.google.com/macros/s/AKfycbxw4k_bhg_DzUePd7kfc07AMORoiW9sD5hbbSZI8clxjVg8kdtsbeQvuv4ukOT_l5Vu7w/exec";
+  "https://script.google.com/macros/s/AKfycby5RQssFPU1j7XTHGGMWKq8RI9oDe3iYd_8L4q7JVvN81s19lq_mmQrVWH3NPML3Iv7/exec";
 
 function rowsToSemicolonCsv(rows) {
   return rows.map((row) => row.map((cell) => String(cell)).join(";")).join("\n") + "\n";

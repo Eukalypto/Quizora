@@ -12,13 +12,25 @@
     "sciences-2",
     "sports-2"
   ],
-  "continents": [
-    "europe",
-    "asia",
-    "north-america",
-    "south-america",
-    "africa",
-    "oceania"
-  ],
-  "centuries": []
+  "domains": [
+    "cat-7",
+    "cat-14",
+    "cat-21",
+    "cat-28",
+    "cat-35",
+    "cat-42",
+    "cat-49",
+    "cat-50",
+    "cat-51",
+    "cat-52",
+    "cat-53",
+    "cat-54",
+    "cat-55",
+    "cat-64",
+    "cat-68",
+    "cat-78",
+    "cat-84",
+    "cat-94",
+    "cat-95"
+  ]
 }
